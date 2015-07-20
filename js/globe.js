@@ -1,9 +1,9 @@
 function initialize() {
   var options = {
-    sky: true,
+    sky: false,
     atmosphere: true,
     dragging: true,
-    tilting: false,
+    tilting: true,
     zooming: false,
     center: [46.8011, 8.2266],
     zoom: 3
@@ -21,14 +21,27 @@ function initialize() {
   });
   toner.addTo(earth);
 
+  var before = null;
+        requestAnimationFrame(function animate(now) {
+            var c = earth.getPosition();
+            var elapsed = before? now - before: 0;
+            before = now;
+            earth.setCenter([c[0], c[1] + 0.9*(elapsed/30)]);
+            requestAnimationFrame(animate);
+        });
+
   recordInfo = function(e) {
     this.latitude = e.latitude;
     this.longitude = e.longitude;
-    console.log(latitude, longitude);
-    initialize_map(Number(this.latitude), Number(this.longitude));
+    // trying to zoom into spot
+    // var bounds = [[this.latitude, this.longitude], [this.latitude + 1, this.longitude + 1]];
+    // earth.panInsideBounds(bounds)
+    // initialize_map(Number(this.latitude), Number(this.longitude));
+    earth.hide()
     }
 
   earth.on('click', recordInfo)
+
 
   function initialize_map(lt, lg) {
     debugger
@@ -36,7 +49,7 @@ function initialize() {
     var lg = lg
     var mapOptions = {
       center: { lat: lt, lng: lg},
-      zoom: 3,
+      zoom: 9,
       mapTypeId: google.maps.MapTypeId.SATELLITE
     };
 
@@ -45,7 +58,6 @@ function initialize() {
   }
 
 }
-
 
 
 
