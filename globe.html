@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script src="http://www.webglearth.com/v2/api.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC003QhluQVufOxd4pWayzMqtYkVfRdy_Y"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+    <script src="js/globe.js"></script>
+    <style>
+      html, body{padding: 0; margin: 0;}
+      #earth_div{top: 0; right: 0; bottom: 0; left: 0; position: absolute !important;}
+      #map-canvas{height: 100%; margin: 0; padding: 0;}
+    </style>
+    <title>WebGL Earth API: Overlays</title>
+  </head>
+  <body onload="initialize()">
+    <div id="earth_div"></div>
+    <div id="map-canvas"></div>
+  </body>
+</html>
