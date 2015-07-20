@@ -1,11 +1,11 @@
 function initialize() {
   var options = {
-    sky: false,
+    sky: true,
     atmosphere: true,
     dragging: true,
     tilting: true,
     zooming: false,
-    center: [46.8011, 8.2266],
+    center: [0, 0],
     zoom: 3
   };
   earth = new WE.map('earth_div', options);
@@ -21,14 +21,15 @@ function initialize() {
   });
   toner.addTo(earth);
 
-  var before = null;
-        requestAnimationFrame(function animate(now) {
-            var c = earth.getPosition();
-            var elapsed = before? now - before: 0;
-            before = now;
-            earth.setCenter([c[0], c[1] + 0.9*(elapsed/30)]);
-            requestAnimationFrame(animate);
-        });
+//spinning
+  // var before = null;
+  //       requestAnimationFrame(function animate(now) {
+  //           var c = earth.getPosition();
+  //           var elapsed = before? now - before: 0;
+  //           before = now;
+  //           earth.setCenter([c[0], c[1] + 10*(elapsed/30)]);
+  //           requestAnimationFrame(animate);
+  //       });
 
   recordInfo = function(e) {
     this.latitude = e.latitude;
@@ -36,7 +37,7 @@ function initialize() {
     // trying to zoom into spot
     // var bounds = [[this.latitude, this.longitude], [this.latitude + 1, this.longitude + 1]];
     // earth.panInsideBounds(bounds)
-    // initialize_map(Number(this.latitude), Number(this.longitude));
+    initialize_map(Number(this.latitude), Number(this.longitude));
     earth.hide()
     }
 
