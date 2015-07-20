@@ -25,12 +25,15 @@ function initialize() {
     this.latitude = e.latitude;
     this.longitude = e.longitude;
     console.log(latitude, longitude);
-    initialize_map(Number(recordInfo.latitude), Number(recordInfo.longitude));
+    initialize_map(Number(this.latitude), Number(this.longitude));
     }
 
   earth.on('click', recordInfo)
 
   function initialize_map(lt, lg) {
+    debugger
+    var lt = lt
+    var lg = lg
     var mapOptions = {
       center: { lat: lt, lng: lg},
       zoom: 3,
