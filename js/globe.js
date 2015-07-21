@@ -18,26 +18,33 @@ function initialize() {
   natural.addTo(earth);
 
 
-  // overlay globe with place details
-  var toner = WE.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
-    attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.',
-    opacity: 0.3
-  });
-  toner.addTo(earth);
+  // overlay globe with place details - might look nicer w/out
+  // var toner = WE.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+  //   attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.',
+  //   opacity: 0.3
+  // });
+  // toner.addTo(earth);
+
+  // our spinner click boolean
+  var bool = false
 
   // record latitude, longitude, and pass to googlemaps
   recordInfo = function(earth) {
-    var lt = Number(earth.latitude),
-        lg = Number(earth.longitude)
+    if (bool === true){
+      var lt = Number(earth.latitude),
+          lg = Number(earth.longitude)
 
-    // zoom iify
-    zoom_in(lt, lg);
+      // zoom iify
+      zoom_in(lt, lg);
 
-    // show map afterwards
-    setTimeout(function(){initialize_map(lt, lg)}, 3000);
-    // don't think this function works to remove the globe after zoom
-    // trying to speed up the street view - it's laggy
-    setTimeout(function(){$("#earth_div").remove()}, 3000);
+      // show map afterwards
+      setTimeout(function(){initialize_map(lt, lg)}, 3000);
+      // don't think this function works to remove the globe after zoom
+      // trying to speed up the street view - it's laggy
+      setTimeout(function(){$("#earth_div").remove()}, 3000);
+    }
+    else
+      {bool = true};
   }
 
   // start whole process when click somewhere on earth
