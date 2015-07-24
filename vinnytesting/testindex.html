@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html, body, #the_actual_map { height: 100%; width: 100%;margin: 0; padding: 0;}
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEFlHNtb2j5Jlixac6I3_vpX_SRAdYqxw">
+    </script>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?libraries=places,visualization">
+    </script>
+    <script type="text/javascript">
+
+    </script>
+    <script src="vinny.js"></script>
+  </head>
+  <body>
+  <div id="panel" style="margin-top">
+      <input type="button" value="Toggle Street View" onclick="toggleStreetView();"></input>
+  </div>
+  <div id="the_actual_map"></div>
+<!-- THIS IS THE ACTUAL MAP THAT WE CALL. THE DIV with ID of "the_actual_map" -->
+  </body>
+</html>

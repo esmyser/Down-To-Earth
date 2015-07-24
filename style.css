@@ -1,3 +1,24 @@
 #earth_div {
     background-image: stars.jpg;
 }
+
+#welcome {
+  z-index: 9999;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  display: block;
+  color: white;
+}
+#fixedbutton {
+    position: fixed;
+    bottom: 50px;
+    left: 20px; 
+}
+.astext {
+    background:none;
+    border:none;
+    margin:0;
+    padding:0;
+    color:white;
+}

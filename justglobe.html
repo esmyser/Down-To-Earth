@@ -10,7 +10,6 @@
         WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
           attribution: '© OpenStreetMap contributors'
         }).addTo(earth);
-
         // Start a simple rotation animation
         var before = null;
         requestAnimationFrame(function animate(now) {
@@ -20,6 +19,15 @@
             earth.setCenter([c[0], c[1] + 0.9*(elapsed/30)]);
             requestAnimationFrame(animate);
         });
+        //spinning
+        // var before = null;
+        //       requestAnimationFrame(function animate(now) {
+        //           var c = earth.getPosition();
+        //           var elapsed = before? now - before: 0;
+        //           before = now;
+        //           earth.setCenter([c[0], c[1] + 10*(elapsed/30)]);
+        //           requestAnimationFrame(animate);
+        //       });
       }
     </script>
     <style>

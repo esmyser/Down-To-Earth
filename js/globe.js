@@ -6,8 +6,10 @@ function initialize() {
     tilting: true,
     zooming: false,
     center: [0, 0],
-    zoom: 3
+    zoom: 3.5
   };
+
+  // overlay globe with earth images
   earth = new WE.map('earth_div', options);
   var natural = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
     tileSize: 256,
@@ -15,57 +17,67 @@ function initialize() {
   });
   natural.addTo(earth);
 
-  var toner = WE.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
-    attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.',
-    opacity: 0.3
-  });
-  toner.addTo(earth);
 
-//spinning
-  // var before = null;
-  //       requestAnimationFrame(function animate(now) {
-  //           var c = earth.getPosition();
-  //           var elapsed = before? now - before: 0;
-  //           before = now;
-  //           earth.setCenter([c[0], c[1] + 10*(elapsed/30)]);
-  //           requestAnimationFrame(animate);
-  //       });
+  // overlay globe with place details - might look nicer w/out
+  // var toner = WE.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+  //   attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.',
+  //   opacity: 0.3
+  // });
+  // toner.addTo(earth);
 
-  recordInfo = function(e) {
-    this.latitude = e.latitude;
-    this.longitude = e.longitude;
-    // trying to zoom into spot
-    // var bounds = [[this.latitude, this.longitude], [this.latitude + 1, this.longitude + 1]];
-    // earth.panInsideBounds(bounds)
-    initialize_map(Number(this.latitude), Number(this.longitude));
-    earth.hide()
+  // our spinner click boolean
+  var bool = false
+
+  // record latitude, longitude, and pass to googlemaps
+  recordInfo = function(earth) {
+    if (bool === true){
+      var lt = Number(earth.latitude),
+          lg = Number(earth.longitude)
+
+      // zoom iify
+      zoom_in(lt, lg);
+
+      // show map afterwards
+      setTimeout(function(){initialize_map(lt, lg)}, 3000);
+      // don't think this function works to remove the globe after zoom
+      // trying to speed up the street view - it's laggy
+      setTimeout(function(){$("#earth_div").remove()}, 3000);
     }
+    else
+      {bool = true};
+  }
 
+  // start whole process when click somewhere on earth
   earth.on('click', recordInfo)
 
+  // zoom in on globe
+  zoom_in = function(lt, lg) {
+    var bounds = [[lt, lg], [(lt + 5), (lg + 5)]];
+    earth.panInsideBounds(bounds)
+  }
 
-  function initialize_map(lt, lg) {
-    debugger
-    var lt = lt
-    var lg = lg
-    var mapOptions = {
-      center: { lat: lt, lng: lg},
-      zoom: 9,
-      mapTypeId: google.maps.MapTypeId.SATELLITE
-    };
+  // start google map
+  initialize_map = function(lt, lg) {
+    var lt = lt,
+        lg = lg,
+        mapOptions = {
+          center: { lat: lt, lng: lg},
+          zoom: 8,
+          mapTypeId: google.maps.MapTypeId.SATELLITE
+        };
 
     var map = new google.maps.Map(document.getElementById('map-canvas'),
         mapOptions);
+
   }
 
+
+    $("#fixedbutton").click(function(){
+    //will reset the globe back to its top spot.
+      alert("YOU CLICKED RESET");  
+    // debugger;
+    
+
+  });
+
 }
-
-
-
-
-
-
-
-
-// take this info from recordInfo and pass to google maps
-// need to record num clicks and only pass even clicks
