@@ -1,4 +1,4 @@
- // earth's a new World
+  // earth's a new World
   // it's theBall wearing theMap
   // when you click theBall, you get a theBall event
   // that has latitude and longitude
@@ -7,18 +7,47 @@
 
 function initialize(){
   earth = new World;
-  $(function(){earth.theBall.on('click', earth.spin)})
-  $(function(){earth.theBall.on('dblclick', earth.spinStop);})
-  $("#reset").on('click', function(){
-      alert("CLICKED");
-      earth = new World;
-      $(function(){earth.theBall.on('dblclick', earth.spinStop);})
-      
-      // toggleStreetView(); 
+
+  $(function(){
+    earth.theBall.on("mousedown", function(){
+        dragging = false;
     });
+    earth.theBall.on("mousemove", function(){
+        dragging = true;
+    });
+    earth.theBall.on("click", function(event){
+        if(dragging === false){
+          earth.spinStop(event);
+        }
+        else if(dragging === true){
+          earth.spin(event);
+        }
+    });
+  })
+
+  // $("#reset").on('click', function(){
+  //     alert("CLICKED");
+  //     earth = new World;
+  //     $(function(){earth.theBall.on('dblclick', earth.spinStop);})
+      
+  //     // toggleStreetView(); 
+  // });
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
 };
 
 function World(){
+  var options = {
+    sky: true,
+    atmosphere: true,
+    dragging: true,
+    tilting: false,
+    zooming: false,
+    center: [0, 100],
+    zoom: 3.5
+  };
+
   this.theBall = WE.map('earth_div', options);
 
   this.theMap = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
@@ -27,20 +56,10 @@ function World(){
     });
 
   this.theMap.addTo(this.theBall);
-
-  var options = {
-    sky: true,
-    atmosphere: true,
-    dragging: true,
-    tilting: true,
-    zooming: false,
-    center: [0, 100],
-    zoom: 3.5
-  };
 };
 
 World.prototype.spin = function(event){
-  before = null;
+  var before = null;
 
   requestAnimationFrame(function animate(now) {
       var coordinates = earth.theBall.getPosition();
@@ -53,14 +72,15 @@ World.prototype.spin = function(event){
 
 World.prototype.spinStop = function(event){
   var lt = Number(event.latitude),
-      lg = Number(event.longitude)
+      lg = Number(event.longitude),
+      before = null
 
   requestAnimationFrame(function animate(now) {
       var coordinates = earth.theBall.getPosition();
-      // var timePassed = before? now - before: 0;
+      var timePassed = before? now - before: 0;
       before = now;
       earth.theBall.setCenter([coordinates[0], lg]);
-      $(requestAnimationFrame(animate)).stop();
+      requestAnimationFrame(animate);
   });
 
   earth.googleMe(lt, lg);
@@ -179,13 +199,18 @@ World.prototype.googleMe = function(lt, lg) {
       } else {
         console.error('Street View data not found for this location.');
       }
-    };
-
-    
-
-    
+    };   
 }
+//  Ezra's old map code
+//   var lt = lt,
+//       lg = lg,
+//       mapOptions = {
+//         center: { lat: lt, lng: lg},
+//         zoom: 8,
+//         mapTypeId: google.maps.MapTypeId.SATELLITE
+//       };
 
-  google.maps.event.addDomListener(window, 'load', initialize);
-
+//   var map = new google.maps.Map(document.getElementById('map-canvas'),
+//       mapOptions);
+// }
 
