@@ -30,13 +30,13 @@ function initialize(){
 
   })
 
-  // $("#reset").on('click', function(){
-  //     alert("CLICKED");
-  //     earth = new World;
-  //     $(function(){earth.theBall.on('dblclick', earth.spinStop);})
+  $("#reset").on('click', function(){
+      alert("CLICKED");
+      earth = new World;
+      $(function(){earth.theBall.on('dblclick', earth.spinStop);})
       
-  //     // toggleStreetView(); 
-  // });
+      // toggleStreetView(); 
+  });
 
 };
 
@@ -68,7 +68,7 @@ World.prototype.spin = function(event){
       var coordinates = earth.theBall.getPosition();
       var timePassed = before? now - before: 0;
       before = now;
-      earth.theBall.setCenter([coordinates[0], coordinates[1] + (timePassed/-30)]);
+      earth.theBall.setCenter([coordinates[0], coordinates[1] + (timePassed/-15)]);
       requestAnimationFrame(animate);
   });
 };
@@ -90,8 +90,6 @@ World.prototype.spinStop = function(event){
 }
 
 World.prototype.googleMe = function(lt, lg) {
-  // var x = $('#map-canvas')[0].attributes.style;
-
   var currentPlace = { lat: lt, lng: lg};
   var mapOptions = {
     center: currentPlace,
@@ -103,10 +101,10 @@ World.prototype.googleMe = function(lt, lg) {
       style: google.maps.ZoomControlStyle.SMALL
     }
   };
-    //set up the map
-    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-    //get streetview
-    var sv = new google.maps.StreetViewService();
+  //set up the map
+  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  //get streetview
+  var sv = new google.maps.StreetViewService();
 
 
     var centerControlDiv = document.createElement('div');
