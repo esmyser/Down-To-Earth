@@ -20,9 +20,14 @@ function initialize(){
           earth.spinStop(event);
         }
         else if(dragging === true){
+          $("#welcome").slideUp();
           earth.spin(event);
         }
     });
+
+    setTimeout(function(){$("#welcome").slideUp();}, 3000);
+    setTimeout(function(){$(".overlay").slideUp();}, 3000);
+
   })
 
 };
