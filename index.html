@@ -9,8 +9,6 @@
     <script src="jquery-2.1.1.min.js"></script>
     <style>
       html, body{padding: 0; margin: 0; width:100%; height:100%;}
-      #map-canvas{height: 100%; margin: 0; padding: 0; z-index: 999;}
-      #earth_div{top: 0; right: 0; bottom: 0; left: 0; position: absolute !important;}
     </style>
     <title>WebGL Earth API: Overlays</title>
   </head>
@@ -26,11 +24,19 @@
 <!--   <div id="header">
     <button type="button" class="reset" id="reset" style="position: absolute; left: 10; top: 10px;">Reset!</button>
   </div> -->
-      <div id="map-canvas"> </div>
-      <div id="earth_div"></div>
 
+    <div id="map-canvas"></div>
       <ul id="nav-bar">
           <li></li>
       </ul>
+    <div id="earth_div" >
+      <div class="overlay">
+        <div id="welcome">
+          <h1>SPIN THE GLOBE</h1>
+          <h2>DRAG TO SPIN</h2>
+          <h2>CLICK TO STOP</h2>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

@@ -20,9 +20,14 @@ function initialize(){
           earth.spinStop(event);
         }
         else if(dragging === true){
+          $("#welcome").slideUp();
           earth.spin(event);
         }
     });
+
+    setTimeout(function(){$("#welcome").slideUp();}, 3000);
+    setTimeout(function(){$(".overlay").slideUp();}, 3000);
+
   })
 
   // $("#reset").on('click', function(){
@@ -32,8 +37,6 @@ function initialize(){
       
   //     // toggleStreetView(); 
   // });
-
-    google.maps.event.addDomListener(window, 'load', initialize);
 
 };
 
@@ -87,10 +90,6 @@ World.prototype.spinStop = function(event){
 }
 
 World.prototype.googleMe = function(lt, lg) {
-  $('#map-canvas').toggle();
-
-
-
   // var x = $('#map-canvas')[0].attributes.style;
 
   var currentPlace = { lat: lt, lng: lg};
