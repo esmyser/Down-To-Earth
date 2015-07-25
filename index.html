@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="http://www.webglearth.com/v2/api.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC003QhluQVufOxd4pWayzMqtYkVfRdy_Y"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+    <script src="js/genesis.js"></script>
+    <script src="jquery-1.11.3.min.js"></script>
+    <style>
+      html, body{padding: 0; margin: 0; width:100%; height:100%;}
+      #map-canvas{height: 100%; margin: 0; padding: 0; z-index: 999;}
+      #earth_div{top: 0; right: 0; bottom: 0; left: 0; position: absolute !important;}
+    </style>
+    <title>WebGL Earth API: Overlays</title>
+  </head>
+  <body onload="initialize()">
+    <div id="map-canvas"></div>
+    <div id="earth_div" ></div>
+  </body>
+</html>
