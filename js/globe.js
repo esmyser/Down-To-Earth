@@ -10,12 +10,12 @@ function initialize() {
   };
 
   // overlay globe with earth images
-  earth = new WE.map('earth_div', options);
-  var natural = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
+  var sphere = new WE.map('earth_div', options);
+  var earthMap = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
     tileSize: 256,
     tms: true
   });
-  natural.addTo(earth);
+  earthMap.addTo(sphere);
 
 
   // overlay globe with place details - might look nicer w/out
@@ -26,15 +26,15 @@ function initialize() {
   // toner.addTo(earth);
 
   // our spinner click boolean
-  var bool = false
+  var clickedOnce = false
 
   // record latitude, longitude, and pass to googlemaps
-  recordInfo = function(earth) {
-    if (bool === true){
-      var lt = Number(earth.latitude),
-          lg = Number(earth.longitude)
+  recordInfo = function(earthClick) {
+    // debugger;
+    if (clickedOnce === true){
+      var lt = Number(earthClick.latitude),
+          lg = Number(earthClick.longitude)
 
-      // zoom iify
       zoom_in(lt, lg);
 
       // show map afterwards
@@ -44,16 +44,16 @@ function initialize() {
       setTimeout(function(){$("#earth_div").remove()}, 3000);
     }
     else
-      {bool = true};
+      {clickedOnce = true};
   }
 
   // start whole process when click somewhere on earth
-  earth.on('click', recordInfo)
+  sphere.on('click', recordInfo)
 
   // zoom in on globe
   zoom_in = function(lt, lg) {
     var bounds = [[lt, lg], [(lt + 5), (lg + 5)]];
-    earth.panInsideBounds(bounds)
+    sphere.panInsideBounds(bounds)
   }
 
   // start google map

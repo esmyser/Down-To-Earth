@@ -3,9 +3,10 @@
   <head>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="http://www.webglearth.com/v2/api.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC003QhluQVufOxd4pWayzMqtYkVfRdy_Y"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEFlHNtb2j5Jlixac6I3_vpX_SRAdYqxw"></script>
     <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
-    <script src="js/globe.js"></script>
+    <script src="js/genesis.js"></script>
+     <script src="jquery-2.1.1.min.js"></script>
     <style>
       html, body{padding: 0; margin: 0; width:100%; height:100%;}
       #map-canvas{height: 100%; margin: 0; padding: 0; z-index: 999;}
@@ -13,12 +14,28 @@
     </style>
     <title>WebGL Earth API: Overlays</title>
   </head>
+    <!-- Below <div> opens the streetview on a click. It calls the function toggleStreetView() -->
+<!--   <div id="panel" style="margin-top">
+      <input type="button" class="street-view-button" id="street-view-button" value="Toggle Street View"></input>
+  </div>
+ -->
+<!--     <div id="panel" style="margin-top">
+      <input type="button" class="street-view-button" id="street-view-button" value="Toggle Street View"></input>
+  </div> -->
   <body onload="initialize()">
-    <div id="welcome">
-      <h1>Where will you go?</h1>
-      <h3>SPIN THE GLOBE</h3>
-    </div>
-    <div id="map-canvas"></div>
+<!--   <div id="header">
+    <button type="button" class="reset" id="reset" style="position: absolute; left: 10; top: 10px;">Reset!</button>
+  </div> -->
+    <div id="map-canvas"> </div>
     <div id="earth_div"></div>
+
+    <ul id="nav-bar">
+        <li></li>
+    </ul>
+    
+
+
+
+
   </body>
 </html>
