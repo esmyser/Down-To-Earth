@@ -7,7 +7,7 @@
 
 function initialize(){
   earth = new World;
-  // $(function(){earth.theBall.on('click', earth.spin)})
+  $(function(){earth.theBall.on('click', earth.spin)})
   $(function(){earth.theBall.on('dblclick', earth.spinStop);})
   $("#reset").on('click', function(){
       alert("CLICKED");
@@ -84,7 +84,7 @@ World.prototype.googleMe = function(lt, lg) {
       style: google.maps.ZoomControlStyle.SMALL
     }
   };
-  //set up the map
+    //set up the map
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     //get streetview
     var sv = new google.maps.StreetViewService();
@@ -94,7 +94,8 @@ World.prototype.googleMe = function(lt, lg) {
     centerControlDiv.index = 1;
     var centerControl = new CenterControl(centerControlDiv, map);
    
-    map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(centerControlDiv);
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(centerControlDiv);
+    // map.controls[google.maps.ZoomControlStyle.LARGE].push(centerControlDiv);
 
     function CenterControl(controlDiv, map) {
 
@@ -107,7 +108,7 @@ World.prototype.googleMe = function(lt, lg) {
       controlUI.style.cursor = 'pointer';
       controlUI.style.marginBottom = '22px';
       controlUI.style.textAlign = 'center';
-      controlUI.title = 'Click to recenter the map';
+      controlUI.title = 'reset button';
       controlDiv.appendChild(controlUI);
 
       // Set CSS for the control interior
@@ -121,19 +122,12 @@ World.prototype.googleMe = function(lt, lg) {
       controlText.innerHTML = 'RESET';
       controlUI.appendChild(controlText);
 
-      // Setup the click event listeners: simply set the map to
-      // Chicago
+      // Setup the click event listeners: simply set the map to our currentlocation.
       google.maps.event.addDomListener(controlUI, 'click', function() {
         $('#map-canvas').toggle();
+        // $('#earth_div').toggle();
           initialize();
       });
-
-      
-       
-          
-          
-      
-
     }
 
 
@@ -185,7 +179,9 @@ World.prototype.googleMe = function(lt, lg) {
       } else {
         console.error('Street View data not found for this location.');
       }
-    }
+    };
+
+    
 
     
 }
