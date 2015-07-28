@@ -30,13 +30,13 @@ function initialize(){
 
   })
 
-  $("#reset").on('click', function(){
-      alert("CLICKED");
-      earth = new World;
-      $(function(){earth.theBall.on('dblclick', earth.spinStop);})
+  // $("#reset").on('click', function(){
+  //     alert("CLICKED");
+  //     earth = new World;
+  //     $(function(){earth.theBall.on('dblclick', earth.spinStop);})
       
       // toggleStreetView(); 
-  });
+  // });
 
 };
 
@@ -90,6 +90,10 @@ World.prototype.spinStop = function(event){
 }
 
 World.prototype.googleMe = function(lt, lg) {
+  // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=cruise&key=API_KEY
+  var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + lt + "," + lg + "&radius=500&types=airport&key=AIzaSyDEFlHNtb2j5Jlixac6I3_vpX_SRAdYqxw"
+  
+  $('#map-canvas').toggle();
   var currentPlace = { lat: lt, lng: lg};
   var mapOptions = {
     center: currentPlace,
@@ -105,8 +109,7 @@ World.prototype.googleMe = function(lt, lg) {
   var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
   //get streetview
   var sv = new google.maps.StreetViewService();
-
-
+  
     var centerControlDiv = document.createElement('div');
     centerControlDiv.index = 1;
     var centerControl = new CenterControl(centerControlDiv, map);
@@ -115,7 +118,6 @@ World.prototype.googleMe = function(lt, lg) {
     // map.controls[google.maps.ZoomControlStyle.LARGE].push(centerControlDiv);
 
     function CenterControl(controlDiv, map) {
-
       // Set CSS for the control border
       var controlUI = document.createElement('div');
       controlUI.style.backgroundColor = '#fff';
@@ -125,9 +127,9 @@ World.prototype.googleMe = function(lt, lg) {
       controlUI.style.cursor = 'pointer';
       controlUI.style.marginBottom = '22px';
       controlUI.style.textAlign = 'center';
+      
       controlUI.title = 'reset button';
       controlDiv.appendChild(controlUI);
-
       // Set CSS for the control interior
       var controlText = document.createElement('div');
       controlText.style.color = 'rgb(25,25,25)';
@@ -136,6 +138,7 @@ World.prototype.googleMe = function(lt, lg) {
       controlText.style.lineHeight = '38px';
       controlText.style.paddingLeft = '5px';
       controlText.style.paddingRight = '5px';
+      
       controlText.innerHTML = 'RESET';
       controlUI.appendChild(controlText);
 
@@ -145,7 +148,7 @@ World.prototype.googleMe = function(lt, lg) {
         // $('#earth_div').toggle();
           initialize();
       });
-    }
+    }; //end function CenterControl
 
 
 
@@ -156,10 +159,11 @@ World.prototype.googleMe = function(lt, lg) {
 
       // Look for a nearby Street View panorama when the map is clicked.
       // getPanoramaByLocation will return the nearest pano when the
-      // given radius is 50 meters or less.
-      google.maps.event.addListener(map, 'click', function(event) {
-        sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
-      });
+      // given radius is 500000 meters or less.
+      //leaving this commented gives you the ability to interact with the google map.
+      // google.maps.event.addListener(map, 'click', function(event) {
+      //   sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
+      // });
 
     panorama = map.getStreetView();
     panorama.setPosition(currentPlace);
@@ -197,7 +201,15 @@ World.prototype.googleMe = function(lt, lg) {
         console.error('Street View data not found for this location.');
       }
     };   
+
+
+
+
+
 }
+
+
+
 //  Ezra's old map code
 //   var lt = lt,
 //       lg = lg,
