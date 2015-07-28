@@ -155,7 +155,7 @@ World.prototype.googleMe = function(lt, lg) {
 
 
       // Set the initial Street View camera to the center of the map
-      sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
+      sv.getPanorama({location: currentPlace, radius: 5000000}, processSVData);
 
       // Look for a nearby Street View panorama when the map is clicked.
       // getPanoramaByLocation will return the nearest pano when the
