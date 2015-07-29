@@ -124,6 +124,7 @@ World.prototype.googleMe = function(lt, lg) {
   // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=cruise&key=API_KEY
   // var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + lt + "," + lg + "&radius=500&types=airport&key=AIzaSyDEFlHNtb2j5Jlixac6I3_vpX_SRAdYqxw"
   
+  $("#map-canvas").toggle();
   var currentPlace = { lat: lt, lng: lg};
   var mapOptions = {
     center: currentPlace,
@@ -231,11 +232,6 @@ World.prototype.googleMe = function(lt, lg) {
         console.error('Street View data not found for this location.');
       }
     };   
-
-
-
-
-
 }
 
 
