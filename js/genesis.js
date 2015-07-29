@@ -8,28 +8,6 @@
 function initialize(){
   earth = new World;
 
-  $(function(){
-    earth.theBall.on("mousedown", function(){
-        dragging = false;
-    });
-    earth.theBall.on("mousemove", function(){
-        dragging = true;
-    });
-    earth.theBall.on("click", function(event){
-        if(dragging === false){
-          earth.spinStop(event);
-        }
-        else if(dragging === true){
-          $("#welcome").slideUp();
-          earth.spin(event);
-        }
-    });
-
-    setTimeout(function(){$("#welcome").slideUp();}, 3000);
-    setTimeout(function(){$(".overlay").slideUp();}, 3000);
-
-  })
-
   // $("#reset").on('click', function(){
   //     alert("CLICKED");
   //     earth = new World;
@@ -38,6 +16,10 @@ function initialize(){
       // toggleStreetView(); 
   // });
 
+  $(function(){
+    $("#explore").click(earth.explore);
+    $("#lucky").click(earth.lucky);
+  })
 };
 
 function World(){
@@ -60,6 +42,55 @@ function World(){
 
   this.theMap.addTo(this.theBall);
 };
+
+World.prototype.lucky = function(){
+    $(function(){
+    earth.theBall.on("mousedown", function(){
+        dragging = false;
+    });
+
+    earth.theBall.on("mousemove", function(){
+        dragging = true;
+    });
+
+    earth.theBall.on("click", function(event){
+        if(dragging === false){
+          earth.spinStop(event);
+        }
+        else if(dragging === true){
+          earth.spin(event);
+        }
+    });
+
+    earth.theBall.on("dbclick", function(){$('#map-canvas').toggle();});
+
+    $("#welcome").slideUp();
+    $(".overlay").slideUp();
+  })
+}
+
+World.prototype.explore = function(){
+    $(function(){
+    earth.theBall.on("mousedown", function(){
+        dragging = false;
+    });
+
+    earth.theBall.on("mousemove", function(){
+        dragging = true;
+    });
+
+    earth.theBall.on("click", function(event){
+        if(dragging === false){
+          earth.spinStop(event);
+        }
+    });
+
+    earth.theBall.on("dbclick", function(){$('#map-canvas').toggle();});
+
+    $("#welcome").slideUp();
+    $(".overlay").slideUp();
+  })
+}
 
 World.prototype.spin = function(event){
   var before = null;
@@ -91,9 +122,8 @@ World.prototype.spinStop = function(event){
 
 World.prototype.googleMe = function(lt, lg) {
   // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=cruise&key=API_KEY
-  var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + lt + "," + lg + "&radius=500&types=airport&key=AIzaSyDEFlHNtb2j5Jlixac6I3_vpX_SRAdYqxw"
+  // var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + lt + "," + lg + "&radius=500&types=airport&key=AIzaSyDEFlHNtb2j5Jlixac6I3_vpX_SRAdYqxw"
   
-  $('#map-canvas').toggle();
   var currentPlace = { lat: lt, lng: lg};
   var mapOptions = {
     center: currentPlace,
