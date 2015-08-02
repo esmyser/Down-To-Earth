@@ -179,11 +179,11 @@ World.prototype.googleMe = function(lt, lg) {
         // $('#earth_div').toggle();
           initialize();
       });
-    }; //end function CenterControl
+    }; //end function ResetControl
 
 
 
-
+    
 
       // Set the initial Street View camera to the center of the map
       sv.getPanorama({location: currentPlace, radius: 5000000}, processSVData);
@@ -198,6 +198,8 @@ World.prototype.googleMe = function(lt, lg) {
 
     panorama = map.getStreetView();
     panorama.setPosition(currentPlace);
+    panorama.controls[google.maps.ControlPosition.TOP_RIGHT].push(centerControlDiv);
+    
     panorama.setPov(/** @type {google.maps.StreetViewPov} */({
       heading: 265,
       pitch: 0
