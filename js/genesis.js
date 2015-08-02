@@ -133,19 +133,6 @@ World.prototype.googleMe = function(lt, lg) {
       map.controls[google.maps.ControlPosition.TOP_RIGHT].push(centerControlDiv);
   //  map.controls[google.maps.ZoomControlStyle.LARGE].push(centerControlDiv);
 
-  //get streetview
-  var sv = new google.maps.StreetViewService();
-      // Set the initial Street View camera to the center of the maps
-      sv.getPanorama({location: currentPlace, radius: 5000000}, processSVData);
-      // Look for a nearby Street View panorama when the map is clicked.
-      // getPanoramaByLocation will return the nearest pano when the
-      // given radius is 500000 meters or less.
-
-      // leaving this commented gives you the ability to interact with the google map.
-      // google.maps.event.addListener(map, 'click', function(event) {
-      //   sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
-      // });
- 
   var centerControlDiv = document.createElement('div');
       centerControlDiv.index = 1;
       centerControl = new CenterControl(centerControlDiv, map);
@@ -158,6 +145,21 @@ World.prototype.googleMe = function(lt, lg) {
         heading: 265,
         pitch: 0
       }));
+
+  setTimeout(function(){ 
+    //get streetview
+    var sv = new google.maps.StreetViewService();
+        // Set the initial Street View camera to the center of the maps
+        sv.getPanorama({location: currentPlace, radius: 5000000}, processSVData);
+        // Look for a nearby Street View panorama when the map is clicked.
+        // getPanoramaByLocation will return the nearest pano when the
+        // given radius is 500000 meters or less.
+
+        // leaving this commented gives you the ability to interact with the google map.
+        // google.maps.event.addListener(map, 'click', function(event) {
+        //   sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
+        // });
+    }, 2000);
 
 
     function CenterControl(centerControlDiv, map) {
