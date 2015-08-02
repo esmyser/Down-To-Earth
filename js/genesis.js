@@ -120,11 +120,12 @@ World.prototype.googleMe = function(lt, lg) {
   var currentPlace = { lat: lt, lng: lg};
   var mapOptions = {
       center: currentPlace,
-      zoom: 10,
+      zoom: 8,
       panControl: false,
       zoomControl: true,
       scaleControl: true,
-      zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL }
+      zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL },
+      mapTypeId: google.maps.MapTypeId.SATELLITE
   };
   var mapCanvas = document.getElementById('map-canvas');
 
@@ -159,7 +160,7 @@ World.prototype.googleMe = function(lt, lg) {
         // google.maps.event.addListener(map, 'click', function(event) {
         //   sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
         // });
-    }, 2000);
+    }, 300);
 
 
     function CenterControl(centerControlDiv, map) {
@@ -206,23 +207,15 @@ World.prototype.googleMe = function(lt, lg) {
               title: data.location.description
             });
 
+        map.panTo(marker.getPosition());
+
         panorama.setPano(data.location.pano);
         panorama.setPov({
           heading: 270,
           pitch: 0
         });
-        panorama.setVisible(true);
 
-        google.maps.event.addListener(marker, 'click', function() {
-          var markerPanoID = data.location.pano;
-          // Set the Pano to use the passed panoID.
-          panorama.setPano(markerPanoID);
-          panorama.setPov({
-            heading: 270,
-            pitch: 0
-          });
-          panorama.setVisible(true);
-        });
+        setTimeout(function(){ panorama.setVisible(true);}, 2000);
       } 
       else {
         console.error('Street View data not found for this location.');
