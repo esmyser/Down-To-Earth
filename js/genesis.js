@@ -213,66 +213,59 @@ World.prototype.googleMe = function(lt, lg) {
             pitch: 0
             });
 
-        setTimeout(function(){
-            var geocoder = new google.maps.Geocoder();
-            geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
-              if (status == google.maps.GeocoderStatus.OK) {
-                    if (results[0]) {
+        // getting the location data from the marker
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            if (results[0]) {
 
-                    // check if we can get city info
-                    for (var j=0; j<results.length; j++) {
-                      if (results[j].types[0]=='locality') { 
-                        var result = results[j];
+                // check if we can get city info
+                for (var i=0; i<results.length; i++) {
+                    if (results[i].types[0]=='locality') { 
+                      var result = results[i];
+                      break; 
+                  }
+                };
+
+                // if we don't have a city, we look for state
+                if (!result) {
+                  for (var i=0; i<results.length; i++) {
+                      if (results[i].types[0]=='administrative_area_level_1') { 
+                        var result = results[i];
                         break; 
+                    }
+                  };
+                };
+
+                // if we don't have a state, we look for country
+                if (!result) {
+                  for (var i=0; i<results.length; i++) {
+                      if (results[i].types[0]=='country') { 
+                        var result = results[i];
+                        break; 
+                    }
+                  };
+                };
+
+                // making some easier variables, result.city, result.region, result.country
+                for (var i = 0; i < result.address_components.length; i++) {
+                  if (result.address_components[i].types[0] == "locality") {
+                          result.city = result.address_components[i].long_name;
                       }
-                    };
-
-                    // if we don't have a city, we look for state
-                    if (!result) {
-                      for (var j=0; j<results.length; j++) {
-                        if (results[j].types[0]=='administrative_area_level_1') { 
-                          var result = results[j];
-                          break; 
-                        }
-                      };
-                    };
-
-                    // if we don't have a state, we look for country
-                    if (!result) {
-                      for (var j=0; j<results.length; j++) {
-                        if (results[j].types[0]=='country') { 
-                          var result = results[j];
-                          break; 
-                        }
-                      };
-                    };
-
-
-                    for (var i = 0; i < results[j].address_components.length; i++) {
-                      if (result.address_components[i].types[0] == "locality") {
-                              //this is the object you are looking for
-                              result.city = result.address_components[i].long_name;
-                          }
-                      if (result.address_components[i].types[0] == "administrative_area_level_1") {
-                              //this is the object you are looking for
-                              result.region = result.address_components[i].long_name;
-                          }
-                      if (result.address_components[i].types[0] == "country") {
-                              //this is the object you are looking for
-                              result.country = result.address_components[i].long_name;
-                          }
+                  if (result.address_components[i].types[0] == "administrative_area_level_1") {
+                          result.region = result.address_components[i].long_name;
                       }
+                  if (result.address_components[i].types[0] == "country") {
+                          result.country = result.address_components[i].long_name;
+                      }
+                  }
 
-                        //city data
-                        console.log(result.city + ", " + result.region + ", " + result.country)
-
-
-                      } 
-                      else { console.log("No results found"); }
-              } 
-              else { console.log("Geocoder failed due to: " + status); }
-            });
-          }, 100);
+                //result data
+                console.log(result.city + ", " + result.region + ", " + result.country)
+            }
+          } 
+          else { console.log("Geocoder failed due to: " + status); }
+        });
 
         setTimeout(function(){ marker.setVisible(true); }, 1000);
         setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
