@@ -200,36 +200,82 @@ World.prototype.googleMe = function(lt, lg) {
 
     function processSVData(data, status) {
       if (status == google.maps.StreetViewStatus.OK) {
-          var marker = new google.maps.Marker({
-              position: data.location.latLng,
-              map: map,
-              title: data.location.description,
-              visible: false
+        var marker = new google.maps.Marker({
+            position: data.location.latLng,
+            map: map,
+            title: data.location.description,
+            visible: false
             });
 
         panorama.setPano(data.location.pano);
         panorama.setPov({
-          heading: 270,
-          pitch: 0
-        });
+            heading: 270,
+            pitch: 0
+            });
 
-        var geocoder = new google.maps.Geocoder();
+        setTimeout(function(){
+            var geocoder = new google.maps.Geocoder();
             geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
               if (status == google.maps.GeocoderStatus.OK) {
-                if (results[0]) {
-                  
-                  console.log(results[0].address_components[2].long_name, results[0].address_components[3].long_name)
-                } else {
-                  console.error('No results found');
-                }
-              } else {
-                console.error('Geocoder failed due to: ' + status);
-              }
+                    if (results[0]) {
+
+                    // check if we can get city info
+                    for (var j=0; j<results.length; j++) {
+                      if (results[j].types[0]=='locality') { 
+                        var result = results[j];
+                        break; 
+                      }
+                    };
+
+                    // if we don't have a city, we look for state
+                    if (!result) {
+                      for (var j=0; j<results.length; j++) {
+                        if (results[j].types[0]=='administrative_area_level_1') { 
+                          var result = results[j];
+                          break; 
+                        }
+                      };
+                    };
+
+                    // if we don't have a state, we look for country
+                    if (!result) {
+                      for (var j=0; j<results.length; j++) {
+                        if (results[j].types[0]=='country') { 
+                          var result = results[j];
+                          break; 
+                        }
+                      };
+                    };
+
+
+                    for (var i = 0; i < results[j].address_components.length; i++) {
+                      if (result.address_components[i].types[0] == "locality") {
+                              //this is the object you are looking for
+                              result.city = result.address_components[i].long_name;
+                          }
+                      if (result.address_components[i].types[0] == "administrative_area_level_1") {
+                              //this is the object you are looking for
+                              result.region = result.address_components[i].long_name;
+                          }
+                      if (result.address_components[i].types[0] == "country") {
+                              //this is the object you are looking for
+                              result.country = result.address_components[i].long_name;
+                          }
+                      }
+
+                        //city data
+                        console.log(result.city + ", " + result.region + ", " + result.country)
+
+
+                      } 
+                      else { console.log("No results found"); }
+              } 
+              else { console.log("Geocoder failed due to: " + status); }
             });
+          }, 100);
 
         setTimeout(function(){ marker.setVisible(true); }, 1000);
         setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
-        debugger;
         setTimeout(function(){ panorama.setVisible(true); }, 2500);
       } 
       else {
