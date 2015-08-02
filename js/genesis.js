@@ -115,7 +115,7 @@ World.prototype.spinStop = function(event){
 World.prototype.googleMe = function(lt, lg) {
   // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=cruise&key=API_KEY
   // var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + lt + "," + lg + "&radius=500&types=airport&key=AIzaSyDEFlHNtb2j5Jlixac6I3_vpX_SRAdYqxw"
-  $("#map-canvas").toggle();
+  $("#map-canvas").fadeToggle(800);
 
   var currentPlace = { lat: lt, lng: lg};
   var mapOptions = {
@@ -147,7 +147,6 @@ World.prototype.googleMe = function(lt, lg) {
         pitch: 0
       }));
 
-  setTimeout(function(){ 
     //get streetview
     var sv = new google.maps.StreetViewService();
         // Set the initial Street View camera to the center of the maps
@@ -160,7 +159,6 @@ World.prototype.googleMe = function(lt, lg) {
         // google.maps.event.addListener(map, 'click', function(event) {
         //   sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
         // });
-    }, 300);
 
 
     function CenterControl(centerControlDiv, map) {
@@ -204,10 +202,9 @@ World.prototype.googleMe = function(lt, lg) {
           var marker = new google.maps.Marker({
               position: data.location.latLng,
               map: map,
-              title: data.location.description
+              title: data.location.description,
+              visible: false
             });
-
-        map.panTo(marker.getPosition());
 
         panorama.setPano(data.location.pano);
         panorama.setPov({
@@ -215,7 +212,9 @@ World.prototype.googleMe = function(lt, lg) {
           pitch: 0
         });
 
-        setTimeout(function(){ panorama.setVisible(true);}, 2000);
+        setTimeout(function(){ marker.setVisible(true); }, 1000);
+        setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
+        setTimeout(function(){ panorama.setVisible(true);}, 2500);
       } 
       else {
         console.error('Street View data not found for this location.');
