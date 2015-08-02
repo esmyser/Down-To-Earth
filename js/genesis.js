@@ -189,10 +189,11 @@ World.prototype.googleMe = function(lt, lg) {
 
       // Listen for Reset click
       google.maps.event.addDomListener(controlUI, 'click', function() {
-        $('#map-canvas').toggle();
-        initialize();
-        $('#earth_div').children().last().remove();
-        $('#earth_div').children().last().remove();
+        // $('#map-canvas').toggle();
+        // initialize();
+        // $('#earth_div').children().last().remove();
+        // $('#earth_div').children().last().remove();
+        window.location.reload();
       });
     };
 
@@ -214,7 +215,7 @@ World.prototype.googleMe = function(lt, lg) {
 
         setTimeout(function(){ marker.setVisible(true); }, 1000);
         setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
-        setTimeout(function(){ panorama.setVisible(true);}, 2500);
+        setTimeout(function(){ panorama.setVisible(true); }, 2500);
       } 
       else {
         console.error('Street View data not found for this location.');
