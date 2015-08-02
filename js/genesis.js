@@ -213,8 +213,23 @@ World.prototype.googleMe = function(lt, lg) {
           pitch: 0
         });
 
+        var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
+              if (status == google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                  
+                  console.log(results[0].address_components[2].long_name, results[0].address_components[3].long_name)
+                } else {
+                  console.error('No results found');
+                }
+              } else {
+                console.error('Geocoder failed due to: ' + status);
+              }
+            });
+
         setTimeout(function(){ marker.setVisible(true); }, 1000);
         setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
+        debugger;
         setTimeout(function(){ panorama.setVisible(true); }, 2500);
       } 
       else {
