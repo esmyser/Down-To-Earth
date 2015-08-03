@@ -21,6 +21,10 @@ html, body{
     padding:5px;
 }
 
+h4{
+  font-size: 50px;
+}
+
 #welcome{
   width: auto;
   position: absolute;
