@@ -147,6 +147,8 @@ World.prototype.googleMe = function(lt, lg) {
         pitch: 0
       }));
 
+      panorama.setOptions({ enableCloseButton: false });
+
     //get streetview
     var sv = new google.maps.StreetViewService();
         // Set the initial Street View camera to the center of the maps
@@ -265,8 +267,31 @@ World.prototype.googleMe = function(lt, lg) {
             }
           } 
           else { console.log("Geocoder failed due to: " + status); }
-        });
 
+          setTimeout(function(){
+            if (result.country) {
+              $("#map-canvas").append("<h1 id='country'></h1>")
+              $("#country").html(result.country)
+            }
+
+            if (result.region) {
+              $("#map-canvas").append("<div id='city-region'></div>")
+              $("#city-region").append("<p>" + result.region + "</p>")
+            }
+
+            if (result.city) {
+              if ($("#city-region")){
+                $("#city-region").append(result.city)
+              }
+              else {
+                $("#map-canvas").append("<div id='city-region'></div>")
+                $("#city-region").append("<p>" + result.city + "</p>")
+              }
+            }
+
+          }, 1000);
+
+        });
         setTimeout(function(){ marker.setVisible(true); }, 1000);
         setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
         setTimeout(function(){ panorama.setVisible(true); }, 2500);
