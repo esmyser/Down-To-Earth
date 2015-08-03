@@ -127,20 +127,26 @@ World.prototype.googleMe = function(lt, lg) {
       zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL },
       mapTypeId: google.maps.MapTypeId.SATELLITE
   };
+
+
+
+
+
   var mapCanvas = document.getElementById('map-canvas');
 
   //set up the map
   var map = new google.maps.Map(mapCanvas, mapOptions);
-      map.controls[google.maps.ControlPosition.TOP_RIGHT].push(centerControlDiv);
-  //  map.controls[google.maps.ZoomControlStyle.LARGE].push(centerControlDiv);
+      // map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
 
-  var centerControlDiv = document.createElement('div');
-      centerControlDiv.index = 1;
-      centerControl = new CenterControl(centerControlDiv, map);
+  //  map.controls[google.maps.ZoomControlStyle.LARGE].push(controlDiv);
+
+  var controlDiv = document.createElement('div');
+      controlDiv.index = 1;
+      centerControl = new CenterControl(controlDiv, map);
 
   var panorama = map.getStreetView();
       panorama.setPosition(currentPlace);
-      panorama.controls[google.maps.ControlPosition.TOP_RIGHT].push(centerControlDiv);
+      panorama.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
       
       panorama.setPov(/** @type {google.maps.StreetViewPov} */({
         heading: 265,
@@ -155,13 +161,17 @@ World.prototype.googleMe = function(lt, lg) {
         // getPanoramaByLocation will return the nearest pano when the
         // given radius is 500000 meters or less.
 
+        //remove the X close button on StreetView
+        panorama.setOptions({ enableCloseButton: false });
+
+
         // leaving this commented gives you the ability to interact with the google map.
         // google.maps.event.addListener(map, 'click', function(event) {
         //   sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
         // });
 
 
-    function CenterControl(centerControlDiv, map) {
+    function CenterControl(controlDiv, map) {
       // Set CSS for the control border
       var controlUI = document.createElement('div');
           controlUI.style.backgroundColor = '#fff';
@@ -185,7 +195,7 @@ World.prototype.googleMe = function(lt, lg) {
 
       // Combine Text and UI, add UI to DOM
       controlUI.appendChild(controlText);
-      centerControlDiv.appendChild(controlUI);
+      controlDiv.appendChild(controlUI);
 
       // Listen for Reset click
       google.maps.event.addDomListener(controlUI, 'click', function() {
@@ -265,6 +275,13 @@ World.prototype.googleMe = function(lt, lg) {
             }
           } 
           else { console.log("Geocoder failed due to: " + status); }
+          
+          var myTitle = document.createElement('h1');
+          myTitle.style.color = 'white';
+          myTitle.innerHTML = result.city + ", " + result.region + ", " + result.country;
+          var myTextDiv = document.createElement('div');
+          myTextDiv.appendChild(myTitle);
+          map.controls[google.maps.ControlPosition.TOP_CENTER].push(myTextDiv);
         });
 
         setTimeout(function(){ marker.setVisible(true); }, 1000);
