@@ -276,12 +276,12 @@ World.prototype.googleMe = function(lt, lg) {
           } 
           else { console.log("Geocoder failed due to: " + status); }
           
-          var myTitle = document.createElement('h1');
+          var myTitle = document.createElement('h4');
           myTitle.style.color = 'white';
-          myTitle.innerHTML = result.city + ", " + result.region + ", " + result.country;
+          myTitle.innerHTML = "<p>" + result.city + ', ' + result.region + ', ' + result.country + "</p>";
           var myTextDiv = document.createElement('div');
           myTextDiv.appendChild(myTitle);
-          map.controls[google.maps.ControlPosition.TOP_CENTER].push(myTextDiv);
+          setTimeout(function(){ map.controls[google.maps.ControlPosition.TOP_CENTER].push(myTextDiv);}, 1000)
         });
 
         setTimeout(function(){ marker.setVisible(true); }, 1000);
