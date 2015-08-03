@@ -41,6 +41,11 @@ h1{
   font-size: 80px;
 }
 
+#country, #city-region {
+  position: absolute;
+  color: white;
+}
+
 #earth_div{
   top: 0; 
   right: 0; 
