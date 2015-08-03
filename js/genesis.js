@@ -200,17 +200,71 @@ World.prototype.googleMe = function(lt, lg) {
 
     function processSVData(data, status) {
       if (status == google.maps.StreetViewStatus.OK) {
-          var marker = new google.maps.Marker({
-              position: data.location.latLng,
-              map: map,
-              title: data.location.description,
-              visible: false
+        var marker = new google.maps.Marker({
+            position: data.location.latLng,
+            map: map,
+            title: data.location.description,
+            visible: false
             });
 
         panorama.setPano(data.location.pano);
         panorama.setPov({
-          heading: 270,
-          pitch: 0
+            heading: 270,
+            pitch: 0
+            });
+
+        // getting the location data from the marker
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            if (results[0]) {
+
+                // check if we can get city info
+                for (var i=0; i<results.length; i++) {
+                    if (results[i].types[0]=='locality') { 
+                      var result = results[i];
+                      break; 
+                  }
+                };
+
+                // if we don't have a city, we look for state
+                if (!result) {
+                  for (var i=0; i<results.length; i++) {
+                      if (results[i].types[0]=='administrative_area_level_1') { 
+                        var result = results[i];
+                        break; 
+                    }
+                  };
+                };
+
+                // if we don't have a state, we look for country
+                if (!result) {
+                  for (var i=0; i<results.length; i++) {
+                      if (results[i].types[0]=='country') { 
+                        var result = results[i];
+                        break; 
+                    }
+                  };
+                };
+
+                // making some easier variables, result.city, result.region, result.country
+                for (var i = 0; i < result.address_components.length; i++) {
+                  if (result.address_components[i].types[0] == "locality") {
+                          result.city = result.address_components[i].long_name;
+                      }
+                  if (result.address_components[i].types[0] == "administrative_area_level_1") {
+                          result.region = result.address_components[i].long_name;
+                      }
+                  if (result.address_components[i].types[0] == "country") {
+                          result.country = result.address_components[i].long_name;
+                      }
+                  }
+
+                //result data
+                console.log(result.city + ", " + result.region + ", " + result.country)
+            }
+          } 
+          else { console.log("Geocoder failed due to: " + status); }
         });
 
         setTimeout(function(){ marker.setVisible(true); }, 1000);
