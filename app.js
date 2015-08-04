@@ -1,4 +1,3 @@
-figaro = require('figaro').parse(figaroJSONPath, callback); // figaroJSONPath can be null and in such case default location of figaro.json is used
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
