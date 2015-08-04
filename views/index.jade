@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  doctype html
+  html
+    head
+      link(rel='stylesheet', type='text/css', href='style.css')
+      script(src='http://www.webglearth.com/v2/api.js')
+      script(src='https://maps.googleapis.com/maps/api/js?key='). ENV["key"]
+      script(src='https://maps.googleapis.com/maps/api/js?libraries=places')
+      script(src='javascripts/genesis.js')
+      script(src='javascripts/jquery-2.1.1.min.js')
+    body(onload='initialize()')
+      #map-canvas(style='display:none')
+      ul#nav-bar
+        li
+      #earth_div
+        .overlay
+          #welcome
+            h1 DOWN TO EARTH
+            h2 GO ANYWHERE IN THE WORLD WITH GOOGLE MAPS
+            button#explore EXPLORE
+            button#lucky I'M FEELING LUCKY
