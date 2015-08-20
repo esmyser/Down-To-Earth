@@ -41,7 +41,7 @@ World.prototype.lucky = function(){
         dragging = false;
     });
 
-    earth.theBall.on("mousemove", function(){
+    earth.theBall.on("mousemove, swiperight", function(){
         dragging = true;
     });
 
