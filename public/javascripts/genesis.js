@@ -45,10 +45,6 @@ World.prototype.lucky = function(){
         dragging = true;
     });
 
-    earth.theBall.on('swipe', function(){
-        dragging = true;
-    });
-
     earth.theBall.on('click', function(event){
         event.preventDefault(); 
         if(dragging === false){
@@ -59,7 +55,15 @@ World.prototype.lucky = function(){
         }
     });
 
-    earth.theBall.on('touch', function(event){
+    earth.theBall.on('touchstart', function(){
+        dragging = false;
+    });
+
+    earth.theBall.on('touchmove', function(){
+        dragging = true;
+    });
+
+    earth.theBall.on('touchend', function(event){
         event.preventDefault(); 
         if(dragging === false){
           earth.spinStop(event);
