@@ -20,7 +20,7 @@ function World(){
     atmosphere: true,
     dragging: true,
     tilting: false,
-    zooming: false,
+    zooming: true,
     center: [0, 100],
     zoom: 3.5
   };
@@ -55,25 +55,25 @@ World.prototype.lucky = function(){
         }
     });
 
-    earth.theBall.on('touchstart', function(){
-        dragging = false;
-    });
+      earth.theBall.on('touchstart', function(event){
+          event.preventDefault(); 
+          dragging = false;
+      });
 
-    earth.theBall.on('touchmove', function(){
-        dragging = true;
-    });
+      earth.theBall.on('touchmove', function(event){
+          event.preventDefault(); 
+          dragging = true;
+      });
 
-    earth.theBall.on('touchend', function(event){
-        event.preventDefault(); 
-        if(dragging === false){
-          earth.spinStop(event);
-        }
-        else if(dragging === true){
-          earth.spin(event);
-        }
-    });
-
-    // earth.theBall.on("dbclick", function(){$('#map-canvas').toggle();});
+      earth.theBall.on('touchend', function(event){
+          event.preventDefault(); 
+          if(dragging === false){
+            earth.spinStop(event);
+          }
+          else if(dragging === true){
+            earth.spin(event);
+          }
+      });
 
     $("#welcome").slideUp();
     $(".overlay").slideUp();
@@ -96,7 +96,22 @@ World.prototype.explore = function(){
         }
     });
 
-    earth.theBall.on("dbclick", function(){$('#map-canvas').toggle();});
+      earth.theBall.on("touchstart", function(event){
+          event.preventDefault(); 
+          dragging = false;
+      });
+
+      earth.theBall.on("touchmove", function(event){
+          event.preventDefault(); 
+          dragging = true;
+      });
+
+      earth.theBall.on("touchend", function(event){
+          event.preventDefault(); 
+          if(dragging === false){
+            earth.spinStop(event);
+          }
+      });
 
     $("#welcome").slideUp();
     $(".overlay").slideUp();
