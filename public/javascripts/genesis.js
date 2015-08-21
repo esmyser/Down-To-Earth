@@ -37,15 +37,20 @@ function World(){
 
 World.prototype.lucky = function(){
     $(function(){
-    earth.theBall.on("mousedown", function(){
+    earth.theBall.on('mousedown', function(){
         dragging = false;
     });
 
-    earth.theBall.on("mousemove", function(){
+    earth.theBall.on('mousemove', function(){
         dragging = true;
     });
 
-    earth.theBall.on("click", function(event){
+    earth.theBall.on('swipe', function(){
+        dragging = true;
+    });
+
+    earth.theBall.on('click', function(event){
+        event.preventDefault(); 
         if(dragging === false){
           earth.spinStop(event);
         }
