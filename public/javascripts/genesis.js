@@ -59,7 +59,7 @@ World.prototype.lucky = function(){
         }
     });
 
-    earth.theBall.on('tap', function(event){
+    earth.theBall.on('touch', function(event){
         event.preventDefault(); 
         if(dragging === false){
           earth.spinStop(event);
