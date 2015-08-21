@@ -73,7 +73,7 @@ World.prototype.lucky = function(){
         }
     });
 
-    earth.theBall.on("dbclick", function(){$('#map-canvas').toggle();});
+    // earth.theBall.on("dbclick", function(){$('#map-canvas').toggle();});
 
     $("#welcome").slideUp();
     $(".overlay").slideUp();
