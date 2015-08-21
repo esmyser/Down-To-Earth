@@ -59,6 +59,16 @@ World.prototype.lucky = function(){
         }
     });
 
+    earth.theBall.on('tap', function(event){
+        event.preventDefault(); 
+        if(dragging === false){
+          earth.spinStop(event);
+        }
+        else if(dragging === true){
+          earth.spin(event);
+        }
+    });
+
     earth.theBall.on("dbclick", function(){$('#map-canvas').toggle();});
 
     $("#welcome").slideUp();
