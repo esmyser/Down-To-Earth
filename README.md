@@ -3,6 +3,11 @@
 ## Description
 Travel the globe from your desk.
 
+## Screenshots
+![Alt text](/public/images/globe.png?raw=true "The Globe")
+![Alt text](/public/images/russia.png?raw=true "Somewhere in Russia")
+![Alt text](/public/images/greatwall.png?raw=true "Great Wall of China")
+
 ## Background
 Bored? Too lazy to move? Love travelling? This is the solution.
 
