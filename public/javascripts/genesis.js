@@ -100,7 +100,7 @@ World.prototype.spinStop = function(event){
   });
 
   googleMe(lt, lg);
-  $("#map-canvas").fadeToggle(800);
+  $("#map-canvas").fadeToggle(900);
 };
 
 function googleMe(lt, lg) {
@@ -153,7 +153,7 @@ function googleMe(lt, lg) {
             if (results[0]) {
 
                 // check if we can get city info
-                for (var i=0; i<results.length; i++) {
+                for (var i = 0; i < results.length; i++) {
                     if (results[i].types[0]=='locality') { 
                       var result = results[i];
                       break; 
@@ -162,7 +162,7 @@ function googleMe(lt, lg) {
 
                 // if we don't have a city, we look for state
                 if (!result) {
-                  for (var i=0; i<results.length; i++) {
+                  for (var i = 0; i < results.length; i++) {
                       if (results[i].types[0]=='administrative_area_level_1') { 
                         var result = results[i];
                         break; 
@@ -172,7 +172,7 @@ function googleMe(lt, lg) {
 
                 // if we don't have a state, we look for country
                 if (!result) {
-                  for (var i=0; i<results.length; i++) {
+                  for (var i = 0; i < results.length; i++) {
                       if (results[i].types[0]=='country') { 
                         var result = results[i];
                         break; 
@@ -201,6 +201,7 @@ function googleMe(lt, lg) {
           
           var myTitle = document.createElement('h4');
           myTitle.style.color = 'white';
+          if 
           myTitle.innerHTML = "<p>" + result.city + ', ' + result.region + ', ' + result.country + "</p>";
           var myTextDiv = document.createElement('div');
           myTextDiv.appendChild(myTitle);
