@@ -99,20 +99,20 @@ World.prototype.spinStop = function(event){
       requestAnimationFrame(animate);
   });
 
-  earth.googleMe(lt, lg);
-}
-
-World.prototype.googleMe = function(lt, lg) {
+  googleMe(lt, lg);
   $("#map-canvas").fadeToggle(800);
+};
 
-  var currentPlace = { lat: lt, lng: lg};
+function googleMe(lt, lg) {
+  var currentPlace = {lat: lt, lng: lg};
+
   var mapOptions = {
       center: currentPlace,
       zoom: 8,
       panControl: false,
       zoomControl: true,
       scaleControl: true,
-      zoomControlOptions: { style: google.maps.ZoomControlStyle.SMALL },
+      zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
       mapTypeId: google.maps.MapTypeId.SATELLITE
   };
 
@@ -126,57 +126,13 @@ World.prototype.googleMe = function(lt, lg) {
 
   var panorama = map.getStreetView();
       panorama.setPosition(currentPlace);
+      panorama.setOptions({enableCloseButton: false});
       panorama.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
-      
-      panorama.setPov(/** @type {google.maps.StreetViewPov} */({
-        heading: 265,
-        pitch: 0
-      }));
+      panorama.setPov({heading: 265, pitch: 0});
 
-    //get streetview
-    var sv = new google.maps.StreetViewService();
-        // Set the initial Street View camera to the center of the maps
-        sv.getPanorama({location: currentPlace, radius: 5000000}, processSVData);
-        // Look for a nearby Street View panorama when the map is clicked.
-        // getPanoramaByLocation will return the nearest pano when the
-        // given radius is 500000 meters or less.
-
-        //remove the X close button on StreetView
-        panorama.setOptions({ enableCloseButton: false });
-
-
-    function CenterControl(controlDiv, map) {
-      // Set CSS for the control border
-      var controlUI = document.createElement('div');
-          controlUI.style.backgroundColor = '#fff';
-          controlUI.style.border = '2px solid #fff';
-          controlUI.style.borderRadius = '3px';
-          controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-          controlUI.style.cursor = 'pointer';
-          controlUI.style.marginBottom = '22px';
-          controlUI.style.textAlign = 'center';
-          controlUI.title = 'reset button';
-  
-      // Set CSS for the control interior
-      var controlText = document.createElement('div');
-          controlText.style.color = 'rgb(25,25,25)';
-          controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
-          controlText.style.fontSize = '16px';
-          controlText.style.lineHeight = '38px';
-          controlText.style.paddingLeft = '5px';
-          controlText.style.paddingRight = '5px';
-          controlText.innerHTML = 'RESET';
-
-      // Combine Text and UI, add UI to DOM
-      controlUI.appendChild(controlText);
-      controlDiv.appendChild(controlUI);
-
-      // Listen for Reset click
-      google.maps.event.addDomListener(controlUI, 'click', function() {
-        window.location.reload();
-      });
-    };
-
+  //get streetview
+  var sv = new google.maps.StreetViewService();
+      sv.getPanorama({location: currentPlace, radius: 5000000}, processSVData);
 
     function processSVData(data, status) {
       if (status == google.maps.StreetViewStatus.OK) {
@@ -188,10 +144,7 @@ World.prototype.googleMe = function(lt, lg) {
             });
 
         panorama.setPano(data.location.pano);
-        panorama.setPov({
-            heading: 270,
-            pitch: 0
-            });
+        panorama.setPov({heading: 270, pitch: 0});
 
         // getting the location data from the marker
         var geocoder = new google.maps.Geocoder();
@@ -262,4 +215,36 @@ World.prototype.googleMe = function(lt, lg) {
         console.error('Street View data not found for this location.');
       }
     };   
+};
+
+function CenterControl(controlDiv, map) {
+  // Set CSS for the control border
+  var controlUI = document.createElement('div');
+      controlUI.style.backgroundColor = '#fff';
+      controlUI.style.border = '2px solid #fff';
+      controlUI.style.borderRadius = '3px';
+      controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+      controlUI.style.cursor = 'pointer';
+      controlUI.style.marginBottom = '22px';
+      controlUI.style.textAlign = 'center';
+      controlUI.title = 'reset button';
+
+  // Set CSS for the control interior
+  var controlText = document.createElement('div');
+      controlText.style.color = 'rgb(25,25,25)';
+      controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+      controlText.style.fontSize = '16px';
+      controlText.style.lineHeight = '38px';
+      controlText.style.paddingLeft = '5px';
+      controlText.style.paddingRight = '5px';
+      controlText.innerHTML = 'RESET';
+
+  // Combine Text and UI, add UI to DOM
+  controlUI.appendChild(controlText);
+  controlDiv.appendChild(controlUI);
+
+  // Listen for Reset click
+  google.maps.event.addDomListener(controlUI, 'click', function() {
+    window.location.reload();
+  });
 };
