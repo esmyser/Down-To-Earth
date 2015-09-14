@@ -1,10 +1,3 @@
-  // earth's a new World
-  // it's theBall wearing theMap
-  // when you click theBall, you get a theBall event
-  // that has latitude and longitude
-  // we can use the event details to spin the globe,
-  // or to stop the globe and send the lat / longitude to google
-
 function initialize(){
   earth = new World;
 
@@ -36,7 +29,7 @@ function World(){
 };
 
 World.prototype.lucky = function(){
-    $(function(){
+  $(function(){
     earth.theBall.on('mousedown', function(){
         dragging = false;
     });
@@ -55,33 +48,13 @@ World.prototype.lucky = function(){
         }
     });
 
-      earth.theBall.on('touchstart', function(event){
-          event.preventDefault(); 
-          dragging = false;
-      });
-
-      earth.theBall.on('touchmove', function(event){
-          event.preventDefault(); 
-          dragging = true;
-      });
-
-      earth.theBall.on('touchend', function(event){
-          event.preventDefault(); 
-          if(dragging === false){
-            earth.spinStop(event);
-          }
-          else if(dragging === true){
-            earth.spin(event);
-          }
-      });
-
     $("#welcome").slideUp();
     $(".overlay").slideUp();
   })
 }
 
 World.prototype.explore = function(){
-    $(function(){
+  $(function(){
     earth.theBall.on("mousedown", function(){
         dragging = false;
     });
@@ -95,23 +68,6 @@ World.prototype.explore = function(){
           earth.spinStop(event);
         }
     });
-
-      earth.theBall.on("touchstart", function(event){
-          event.preventDefault(); 
-          dragging = false;
-      });
-
-      earth.theBall.on("touchmove", function(event){
-          event.preventDefault(); 
-          dragging = true;
-      });
-
-      earth.theBall.on("touchend", function(event){
-          event.preventDefault(); 
-          if(dragging === false){
-            earth.spinStop(event);
-          }
-      });
 
     $("#welcome").slideUp();
     $(".overlay").slideUp();
@@ -147,8 +103,6 @@ World.prototype.spinStop = function(event){
 }
 
 World.prototype.googleMe = function(lt, lg) {
-  // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=cruise&key=API_KEY
-  // var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + lt + "," + lg + "&radius=500&types=airport&key=AIzaSyDEFlHNtb2j5Jlixac6I3_vpX_SRAdYqxw"
   $("#map-canvas").fadeToggle(800);
 
   var currentPlace = { lat: lt, lng: lg};
@@ -162,17 +116,9 @@ World.prototype.googleMe = function(lt, lg) {
       mapTypeId: google.maps.MapTypeId.SATELLITE
   };
 
-
-
-
-
   var mapCanvas = document.getElementById('map-canvas');
 
-  //set up the map
   var map = new google.maps.Map(mapCanvas, mapOptions);
-      // map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
-
-  //  map.controls[google.maps.ZoomControlStyle.LARGE].push(controlDiv);
 
   var controlDiv = document.createElement('div');
       controlDiv.index = 1;
@@ -197,12 +143,6 @@ World.prototype.googleMe = function(lt, lg) {
 
         //remove the X close button on StreetView
         panorama.setOptions({ enableCloseButton: false });
-
-
-        // leaving this commented gives you the ability to interact with the google map.
-        // google.maps.event.addListener(map, 'click', function(event) {
-        //   sv.getPanorama({location: currentPlace, radius: 500000}, processSVData);
-        // });
 
 
     function CenterControl(controlDiv, map) {
@@ -233,10 +173,6 @@ World.prototype.googleMe = function(lt, lg) {
 
       // Listen for Reset click
       google.maps.event.addDomListener(controlUI, 'click', function() {
-        // $('#map-canvas').toggle();
-        // initialize();
-        // $('#earth_div').children().last().remove();
-        // $('#earth_div').children().last().remove();
         window.location.reload();
       });
     };
