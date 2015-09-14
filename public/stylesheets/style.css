@@ -51,6 +51,7 @@ h1{
   bottom: 0; 
   left: 0; 
   position: absolute !important;
+  cursor: pointer;
 }
 
 #map-canvas{
