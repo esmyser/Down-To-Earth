@@ -51,7 +51,7 @@ World.prototype.lucky = function(){
     $("#welcome").slideUp();
     $(".overlay").slideUp();
   })
-}
+};
 
 World.prototype.explore = function(){
   $(function(){
@@ -72,7 +72,7 @@ World.prototype.explore = function(){
     $("#welcome").slideUp();
     $(".overlay").slideUp();
   })
-}
+};
 
 World.prototype.spin = function(event){
   var before = null;
@@ -201,7 +201,6 @@ function googleMe(lt, lg) {
           
           var myTitle = document.createElement('h4');
           myTitle.style.color = 'white';
-          if 
           myTitle.innerHTML = "<p>" + result.city + ', ' + result.region + ', ' + result.country + "</p>";
           var myTextDiv = document.createElement('div');
           myTextDiv.appendChild(myTitle);
