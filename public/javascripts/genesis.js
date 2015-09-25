@@ -1,10 +1,6 @@
 function initialize(){
   earth = new World;
-
-  $(function(){
-    $("#explore").click(earth.explore);
-    $("#lucky").click(earth.lucky);
-  })
+  earth.explore();
 };
 
 function World(){
@@ -28,34 +24,10 @@ function World(){
   this.theMap.addTo(this.theBall);
 };
 
-World.prototype.lucky = function(){
-  $(function(){
-    earth.theBall.on('mousedown', function(){
-        dragging = false;
-    });
-
-    earth.theBall.on('mousemove', function(){
-        dragging = true;
-    });
-
-    earth.theBall.on('click', function(event){
-        event.preventDefault(); 
-        if(dragging === false){
-          earth.spinStop(event);
-        }
-        else if(dragging === true){
-          earth.spin(event);
-        }
-    });
-
-    $("#welcome").slideUp();
-    $(".overlay").slideUp();
-  })
-};
-
 World.prototype.explore = function(){
   $(function(){
     earth.theBall.on("mousedown", function(){
+      $("#welcome").slideUp();
         dragging = false;
     });
 
@@ -69,8 +41,6 @@ World.prototype.explore = function(){
         }
     });
 
-    $("#welcome").slideUp();
-    $(".overlay").slideUp();
   })
 };
 
@@ -201,7 +171,7 @@ function googleMe(lt, lg) {
           
           var myTitle = document.createElement('h4');
           myTitle.style.color = 'white';
-          myTitle.innerHTML = "<p>" + result.city + ', ' + result.region + ', ' + result.country + "</p>";
+          myTitle.innerHTML = "<p id='big_font'>" + result.city + ', ' + result.region + ', ' + result.country + "</p>";
           var myTextDiv = document.createElement('div');
           myTextDiv.appendChild(myTitle);
           setTimeout(function(){ map.controls[google.maps.ControlPosition.TOP_CENTER].push(myTextDiv);}, 1000)
@@ -248,3 +218,34 @@ function CenterControl(controlDiv, map) {
     window.location.reload();
   });
 };
+
+
+
+
+
+
+
+// World.prototype.lucky = function(){
+//   $(function(){
+//     earth.theBall.on('mousedown', function(){
+//         dragging = false;
+//     });
+
+//     earth.theBall.on('mousemove', function(){
+//         dragging = true;
+//     });
+
+//     earth.theBall.on('click', function(event){
+//         event.preventDefault(); 
+//         if(dragging === false){
+//           earth.spinStop(event);
+//         }
+//         else if(dragging === true){
+//           earth.spin(event);
+//         }
+//     });
+
+//     $("#welcome").slideUp();
+//     $(".overlay").slideUp();
+//   })
+// };
