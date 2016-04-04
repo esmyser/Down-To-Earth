@@ -1,9 +1,15 @@
 var express = require('express');
-var router = express.Router();
+var router  = express.Router();
+var ENV     = require('figaro.json');
 
-/* GET home page. */
+// GET Home Page
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Down to Earth' });
+    console.log(ENV.key);
+    
+    res.render('index', { 
+        title : 'Down to Earth', 
+        key   : ENV.key 
+    });
 });
 
 module.exports = router;

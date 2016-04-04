@@ -1,31 +1,30 @@
-function initialize(){
-  earth = new World;
+function run(){
+  earth = new World();
   earth.explore();
-};
+}
 
 function World(){
   var options = {
-    sky: true,
-    atmosphere: true,
-    dragging: true,
-    tilting: false,
-    zooming: true,
-    center: [0, 100],
-    zoom: 3.5
+    sky        : true,
+    atmosphere : true,
+    dragging   : true,
+    tilting    : false,
+    zooming    : true,
+    center     : [0, 100],
+    zoom       : 3.5
   };
 
   this.theBall = WE.map('earth_div', options);
 
   this.theMap = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
-      tileSize: 256,
-      tms: true
+      tileSize : 256,
+      tms      : true
     });
 
   this.theMap.addTo(this.theBall);
-};
+}
 
 World.prototype.explore = function(){
-  $(function(){
     earth.theBall.on("mousedown", function(){
       $("#welcome").slideUp();
         dragging = false;
@@ -36,40 +35,27 @@ World.prototype.explore = function(){
     });
 
     earth.theBall.on("click", function(event){
-        if(dragging === false){
-          earth.spinStop(event);
+        if (!dragging) {
+          earth.stop(event);
         }
     });
-
-  })
 };
 
-World.prototype.spin = function(event){
-  var before = null;
+World.prototype.stop = function(event){
+  var lt = Number(event.latitude);
+  var lg = Number(event.longitude);
+  var before;
 
   requestAnimationFrame(function animate(now) {
       var coordinates = earth.theBall.getPosition();
-      var timePassed = before? now - before: 0;
-      before = now;
-      earth.theBall.setCenter([coordinates[0], coordinates[1] + (timePassed/-15)]);
-      requestAnimationFrame(animate);
-  });
-};
-
-World.prototype.spinStop = function(event){
-  var lt = Number(event.latitude),
-      lg = Number(event.longitude),
-      before = null
-
-  requestAnimationFrame(function animate(now) {
-      var coordinates = earth.theBall.getPosition();
-      var timePassed = before? now - before: 0;
+      var timePassed  = before ? (now - before) : 0;
       before = now;
       earth.theBall.setCenter([coordinates[0], lg]);
       requestAnimationFrame(animate);
   });
 
   googleMe(lt, lg);
+
   $("#map-canvas").fadeToggle(900);
 };
 
@@ -77,13 +63,13 @@ function googleMe(lt, lg) {
   var currentPlace = {lat: lt, lng: lg};
 
   var mapOptions = {
-      center: currentPlace,
-      zoom: 8,
-      panControl: false,
-      zoomControl: true,
-      scaleControl: true,
-      zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL},
-      mapTypeId: google.maps.MapTypeId.SATELLITE
+      center             : currentPlace,
+      zoom               : 8,
+      panControl         : false,
+      zoomControl        : true,
+      scaleControl       : true,
+      zoomControlOptions : { style : google.maps.ZoomControlStyle.SMALL },
+      mapTypeId          : google.maps.MapTypeId.SATELLITE
   };
 
   var mapCanvas = document.getElementById('map-canvas');
@@ -96,21 +82,24 @@ function googleMe(lt, lg) {
 
   var panorama = map.getStreetView();
       panorama.setPosition(currentPlace);
-      panorama.setOptions({enableCloseButton: false});
+      panorama.setOptions({ enableCloseButton : false });
       panorama.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
-      panorama.setPov({heading: 265, pitch: 0});
+      panorama.setPov({
+        heading : 265, 
+        pitch   : 0
+      });
 
   //get streetview
   var sv = new google.maps.StreetViewService();
-      sv.getPanorama({location: currentPlace, radius: 5000000}, processSVData);
+      sv.getPanorama({ location : currentPlace, radius : 5000000 }, processSVData);
 
     function processSVData(data, status) {
       if (status == google.maps.StreetViewStatus.OK) {
         var marker = new google.maps.Marker({
-            position: data.location.latLng,
-            map: map,
-            title: data.location.description,
-            visible: false
+            position : data.location.latLng,
+            map      : map,
+            title    : data.location.description,
+            visible  : false
             });
 
         panorama.setPano(data.location.pano);
@@ -128,7 +117,7 @@ function googleMe(lt, lg) {
                       var result = results[i];
                       break; 
                   }
-                };
+                }
 
                 // if we don't have a city, we look for state
                 if (!result) {
@@ -137,8 +126,8 @@ function googleMe(lt, lg) {
                         var result = results[i];
                         break; 
                     }
-                  };
-                };
+                  }
+                }
 
                 // if we don't have a state, we look for country
                 if (!result) {
@@ -147,8 +136,8 @@ function googleMe(lt, lg) {
                         var result = results[i];
                         break; 
                     }
-                  };
-                };
+                  }
+                }
 
                 // making some easier variables, result.city, result.region, result.country
                 for (var i = 0; i < result.address_components.length; i++) {
@@ -164,7 +153,7 @@ function googleMe(lt, lg) {
                   }
 
                 //result data
-                console.log(result.city + ", " + result.region + ", " + result.country)
+                console.log(result.city + ", " + result.region + ", " + result.country);
             }
           } 
           else { console.log("Geocoder failed due to: " + status); }
@@ -174,7 +163,7 @@ function googleMe(lt, lg) {
           myTitle.innerHTML = "<p id='big_font'>" + result.city + ', ' + result.region + ', ' + result.country + "</p>";
           var myTextDiv = document.createElement('div');
           myTextDiv.appendChild(myTitle);
-          setTimeout(function(){ map.controls[google.maps.ControlPosition.TOP_CENTER].push(myTextDiv);}, 1000)
+          setTimeout(function(){ map.controls[google.maps.ControlPosition.TOP_CENTER].push(myTextDiv);}, 1000);
         });
 
         setTimeout(function(){ marker.setVisible(true); }, 1000);
@@ -182,32 +171,32 @@ function googleMe(lt, lg) {
         setTimeout(function(){ panorama.setVisible(true); }, 2500);
       } 
       else {
-        console.error('Street View data not found for this location.');
+        console.error('Street View data not found for earth location.');
       }
-    };   
-};
+    }
+}
 
 function CenterControl(controlDiv, map) {
   // Set CSS for the control border
   var controlUI = document.createElement('div');
       controlUI.style.backgroundColor = '#fff';
-      controlUI.style.border = '2px solid #fff';
-      controlUI.style.borderRadius = '3px';
-      controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-      controlUI.style.cursor = 'pointer';
-      controlUI.style.marginBottom = '22px';
-      controlUI.style.textAlign = 'center';
-      controlUI.title = 'reset button';
+      controlUI.style.border          = '2px solid #fff';
+      controlUI.style.borderRadius    = '3px';
+      controlUI.style.boxShadow       = '0 2px 6px rgba(0,0,0,.3)';
+      controlUI.style.cursor          = 'pointer';
+      controlUI.style.marginBottom    = '22px';
+      controlUI.style.textAlign       = 'center';
+      controlUI.title                 = 'reset button';
 
   // Set CSS for the control interior
   var controlText = document.createElement('div');
-      controlText.style.color = 'rgb(25,25,25)';
-      controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
-      controlText.style.fontSize = '16px';
-      controlText.style.lineHeight = '38px';
-      controlText.style.paddingLeft = '5px';
-      controlText.style.paddingRight = '5px';
-      controlText.innerHTML = 'RESET';
+      controlText.style.color         = 'rgb(25,25,25)';
+      controlText.style.fontFamily    = 'Roboto,Arial,sans-serif';
+      controlText.style.fontSize      = '16px';
+      controlText.style.lineHeight    = '38px';
+      controlText.style.paddingLeft   = '5px';
+      controlText.style.paddingRight  = '5px';
+      controlText.innerHTML           = 'RESET';
 
   // Combine Text and UI, add UI to DOM
   controlUI.appendChild(controlText);
@@ -217,35 +206,4 @@ function CenterControl(controlDiv, map) {
   google.maps.event.addDomListener(controlUI, 'click', function() {
     window.location.reload();
   });
-};
-
-
-
-
-
-
-
-// World.prototype.lucky = function(){
-//   $(function(){
-//     earth.theBall.on('mousedown', function(){
-//         dragging = false;
-//     });
-
-//     earth.theBall.on('mousemove', function(){
-//         dragging = true;
-//     });
-
-//     earth.theBall.on('click', function(event){
-//         event.preventDefault(); 
-//         if(dragging === false){
-//           earth.spinStop(event);
-//         }
-//         else if(dragging === true){
-//           earth.spin(event);
-//         }
-//     });
-
-//     $("#welcome").slideUp();
-//     $(".overlay").slideUp();
-//   })
-// };
+}
