@@ -6,14 +6,11 @@ block content
     head
       link(href='https://fonts.googleapis.com/css?family=Exo:400,900,900italic', rel='stylesheet', type='text/css')
       script(src='http://www.webglearth.com/v2/api.js')
-      script(src='https://maps.googleapis.com/maps/api/js?key='). #{key}
       script(src='https://maps.googleapis.com/maps/api/js?libraries=places')
       script(src='javascripts/genesis.js')
       script(src='javascripts/jquery-2.1.1.min.js')
     body(onload='run()')
       #map-canvas(style='display:none')
-      ul#nav-bar
-        li
       #earth_div
           #welcome
             h1 DOWN TO EARTH

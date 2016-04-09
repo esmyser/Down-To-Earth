@@ -1,8 +1,3 @@
-function run(){
-  earth = new World();
-  earth.explore();
-}
-
 function World(){
   var options = {
     sky        : true,
@@ -14,52 +9,42 @@ function World(){
     zoom       : 3.5
   };
 
-  this.theBall = WE.map('earth_div', options);
+  this.ball = WE.map('earth_div', options);
 
-  this.theMap = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
-      tileSize : 256,
-      tms      : true
-    });
+  this.map  = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
+                  tileSize : 256,
+                  tms      : true
+                });
 
-  this.theMap.addTo(this.theBall);
+  this.map.addTo(this.ball);
 }
 
-World.prototype.explore = function(){
-    earth.theBall.on("mousedown", function(){
-      $("#welcome").slideUp();
-        dragging = false;
-    });
+function run(){
+  earth = new World();
+  addRules(earth);
+}
 
-    earth.theBall.on("mousemove", function(){
-        dragging = true;
-    });
-
-    earth.theBall.on("click", function(event){
-        if (!dragging) {
-          earth.stop(event);
-        }
-    });
-};
-
-World.prototype.stop = function(event){
-  var lt = Number(event.latitude);
-  var lg = Number(event.longitude);
-  var before;
-
-  requestAnimationFrame(function animate(now) {
-      var coordinates = earth.theBall.getPosition();
-      var timePassed  = before ? (now - before) : 0;
-      before = now;
-      earth.theBall.setCenter([coordinates[0], lg]);
-      requestAnimationFrame(animate);
+addRules = function(earth){
+  earth.ball.on("mousedown", function(){
+    $("#welcome").slideUp();
+    dragging = false;
   });
 
-  googleMe(lt, lg);
+  earth.ball.on("mousemove", function(){
+    dragging = true;
+  });
 
-  $("#map-canvas").fadeToggle(900);
+  earth.ball.on("click", function(e){
+    if (dragging) { return; }
+
+    googleMapIt(e);
+    $("#map-canvas").fadeToggle(900);
+  });
 };
 
-function googleMe(lt, lg) {
+googleMapIt = function(e) {
+  var lt = Number(e.latitude);
+  var lg = Number(e.longitude);
   var currentPlace = {lat: lt, lng: lg};
 
   var mapOptions = {
