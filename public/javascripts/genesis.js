@@ -1,4 +1,4 @@
-function World(){
+function Globe(){
   var options = {
     sky        : true,
     atmosphere : true,
@@ -6,28 +6,48 @@ function World(){
     tilting    : false,
     zooming    : true,
     center     : [0, 100],
-    zoom       : 3.5
+    zoom       : 3.2
   };
 
   this.ball = WE.map('earth_div', options);
-
   this.map  = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
                   tileSize : 256,
                   tms      : true
-                });
+              });
+    
 
   this.map.addTo(this.ball);
 }
 
-function run(){
-  earth = new World();
-  addRules(earth);
+function GoogleMap(){
+  var mapDiv = document.getElementById('map-canvas');
+  var mapOptions = {
+      center             : { lat: -34, lng: 151 },
+      zoom               : 8,
+      panControl         : false,
+      scaleControl       : true,
+      zoomControl        : true,
+      zoomControlOptions : { style : google.maps.ZoomControlStyle.SMALL },
+      mapTypeId          : google.maps.MapTypeId.SATELLITE
+  };
+
+  this.map        = new google.maps.Map(mapDiv, mapOptions);
+  this.streetview = new google.maps.StreetViewService();
+  this.controlDiv = document.createElement('div');
+  this.controlDiv.index = 1;
 }
 
+run = function(){
+  var earth = new Globe();
+  addRules(earth);
+};
+
 addRules = function(earth){
+  var dragging; 
+
   earth.ball.on("mousedown", function(){
-    $("#welcome").slideUp();
     dragging = false;
+    $("#welcome").slideUp();
   });
 
   earth.ball.on("mousemove", function(){
@@ -36,159 +56,215 @@ addRules = function(earth){
 
   earth.ball.on("click", function(e){
     if (dragging) { return; }
-
-    googleMapIt(e);
-    $("#map-canvas").fadeToggle(900);
+    mapIt(e);
   });
 };
 
-googleMapIt = function(e) {
-  var lt = Number(e.latitude);
-  var lg = Number(e.longitude);
-  var currentPlace = {lat: lt, lng: lg};
+mapIt = function(e) {
+  var gMap = new GoogleMap();
 
-  var mapOptions = {
-      center             : currentPlace,
-      zoom               : 8,
-      panControl         : false,
-      zoomControl        : true,
-      scaleControl       : true,
-      zoomControlOptions : { style : google.maps.ZoomControlStyle.SMALL },
-      mapTypeId          : google.maps.MapTypeId.SATELLITE
+  var currentPlace = getPlace(e);
+  gMap.map.setCenter(currentPlace);
+
+  $("#map-canvas").fadeToggle(900);
+
+  getStreetview(gMap, currentPlace);
+  addResetButton(gMap.controlDiv);
+};
+
+getPlace = function(e){
+  var currentPlace = {
+    lat : Number(e.latitude), 
+    lng : Number(e.longitude)
   };
 
-  var mapCanvas = document.getElementById('map-canvas');
+  return currentPlace;
+};
 
-  var map = new google.maps.Map(mapCanvas, mapOptions);
+getStreetview = function(gMap, currentPlace){
+  var controlDiv = gMap.controlDiv;
+  var streetview = gMap.streetview;
+  var map        = gMap.map;
 
-  var controlDiv = document.createElement('div');
-      controlDiv.index = 1;
-      centerControl = new CenterControl(controlDiv, map);
+  streetview.getPanorama({ 
+    location : currentPlace, 
+    radius   : 5000000 
+  }, processSVData);
+
+  function processSVData(data, status) {
+    if (status == google.maps.StreetViewStatus.OK) {
+      setupAndRenderStreetView(data, status, gMap, currentPlace);
+    } else {
+      console.error('Street View data not found for earth location.');
+    }
+  }
+};
+
+setupAndRenderStreetView = function(data, status, gMap, currentPlace){
+  var map        = gMap.map;
+  var controlDiv = gMap.controlDiv;
+  var position   = data.location.latLng;
+  var marker     = new google.maps.Marker({
+      position : position,
+      map      : map,
+      title    : data.location.description,
+      visible  : false
+  });
 
   var panorama = map.getStreetView();
       panorama.setPosition(currentPlace);
       panorama.setOptions({ enableCloseButton : false });
       panorama.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
-      panorama.setPov({
-        heading : 265, 
-        pitch   : 0
-      });
+      panorama.setPano(data.location.pano);
+      panorama.setPov({heading: 270, pitch: 0});
 
-  //get streetview
-  var sv = new google.maps.StreetViewService();
-      sv.getPanorama({ location : currentPlace, radius : 5000000 }, processSVData);
+  reverseGeocodeLocation(map, position);
 
-    function processSVData(data, status) {
-      if (status == google.maps.StreetViewStatus.OK) {
-        var marker = new google.maps.Marker({
-            position : data.location.latLng,
-            map      : map,
-            title    : data.location.description,
-            visible  : false
-            });
+  setTimeout(function(){ marker.setVisible(true);         }, 1000);
+  setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
+  setTimeout(function(){ panorama.setVisible(true);       }, 2500);
+};
 
-        panorama.setPano(data.location.pano);
-        panorama.setPov({heading: 270, pitch: 0});
+reverseGeocodeLocation = function(map, position){
+  var geocoder = new google.maps.Geocoder();
+  
+  geocoder.geocode({ 'location': position }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK && results[0]) {
+      var location = getLocation(results);
+      appendLocationToDOM(map, location);
+      console.log(location);
+    } else { 
+      console.log("Geocoder failed due to: " + status); 
+    }
+  });
+};
 
-        // getting the location data from the marker
-        var geocoder = new google.maps.Geocoder();
-        geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
-          if (status == google.maps.GeocoderStatus.OK) {
-            if (results[0]) {
+getLocation = function(results){
+  var location = getLocationData(results);
+  var name     = getLocationName(location);
 
-                // check if we can get city info
-                for (var i = 0; i < results.length; i++) {
-                    if (results[i].types[0]=='locality') { 
-                      var result = results[i];
-                      break; 
-                  }
-                }
+  return name;
+};
 
-                // if we don't have a city, we look for state
-                if (!result) {
-                  for (var i = 0; i < results.length; i++) {
-                      if (results[i].types[0]=='administrative_area_level_1') { 
-                        var result = results[i];
-                        break; 
-                    }
-                  }
-                }
+getLocationData = function(results){
+  var location; 
 
-                // if we don't have a state, we look for country
-                if (!result) {
-                  for (var i = 0; i < results.length; i++) {
-                      if (results[i].types[0]=='country') { 
-                        var result = results[i];
-                        break; 
-                    }
-                  }
-                }
+  // see if there's city level data
+  for (i=0; i<results.length; i++) {
+      if (results[i].types[0]=='locality') { 
+        location = results[i];
+        break; 
+    }
+  }
 
-                // making some easier variables, result.city, result.region, result.country
-                for (var i = 0; i < result.address_components.length; i++) {
-                  if (result.address_components[i].types[0] == "locality") {
-                          result.city = result.address_components[i].long_name;
-                      }
-                  if (result.address_components[i].types[0] == "administrative_area_level_1") {
-                          result.region = result.address_components[i].long_name;
-                      }
-                  if (result.address_components[i].types[0] == "country") {
-                          result.country = result.address_components[i].long_name;
-                      }
-                  }
-
-                //result data
-                console.log(result.city + ", " + result.region + ", " + result.country);
-            }
-          } 
-          else { console.log("Geocoder failed due to: " + status); }
-          
-          var myTitle = document.createElement('h4');
-          myTitle.style.color = 'white';
-          myTitle.innerHTML = "<p id='big_font'>" + result.city + ', ' + result.region + ', ' + result.country + "</p>";
-          var myTextDiv = document.createElement('div');
-          myTextDiv.appendChild(myTitle);
-          setTimeout(function(){ map.controls[google.maps.ControlPosition.TOP_CENTER].push(myTextDiv);}, 1000);
-        });
-
-        setTimeout(function(){ marker.setVisible(true); }, 1000);
-        setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
-        setTimeout(function(){ panorama.setVisible(true); }, 2500);
-      } 
-      else {
-        console.error('Street View data not found for earth location.');
+  // if we don't have city level info, check for state level
+  if (!location) {
+    for (i=0; i<results.length; i++) {
+        if (results[i].types[0]=='administrative_area_level_1') { 
+          location = results[i];
+          break; 
       }
     }
-}
+  }
 
-function CenterControl(controlDiv, map) {
-  // Set CSS for the control border
-  var controlUI = document.createElement('div');
-      controlUI.style.backgroundColor = '#fff';
-      controlUI.style.border          = '2px solid #fff';
-      controlUI.style.borderRadius    = '3px';
-      controlUI.style.boxShadow       = '0 2px 6px rgba(0,0,0,.3)';
-      controlUI.style.cursor          = 'pointer';
-      controlUI.style.marginBottom    = '22px';
-      controlUI.style.textAlign       = 'center';
-      controlUI.title                 = 'reset button';
+  // if we don't have a state level info, check for country level
+  if (!location) {
+    for (i=0; i<results.length; i++) {
+        if (results[i].types[0]=='country') { 
+          location = results[i];
+          break; 
+      }
+    }
+  }
 
-  // Set CSS for the control interior
-  var controlText = document.createElement('div');
-      controlText.style.color         = 'rgb(25,25,25)';
-      controlText.style.fontFamily    = 'Roboto,Arial,sans-serif';
-      controlText.style.fontSize      = '16px';
-      controlText.style.lineHeight    = '38px';
-      controlText.style.paddingLeft   = '5px';
-      controlText.style.paddingRight  = '5px';
-      controlText.innerHTML           = 'RESET';
+  return location;
+};
 
-  // Combine Text and UI, add UI to DOM
-  controlUI.appendChild(controlText);
-  controlDiv.appendChild(controlUI);
+getLocationName = function(location){
+  var city, region, country;
 
-  // Listen for Reset click
-  google.maps.event.addDomListener(controlUI, 'click', function() {
+  for (i=0; i<location.address_components.length; i++) {
+    if (location.address_components[i].types[0] == "locality") {
+            city    = location.address_components[i].long_name;
+    }
+    if (location.address_components[i].types[0] == "administrative_area_level_1") {
+            region  = location.address_components[i].long_name;
+    }
+    if (location.address_components[i].types[0] == "country") {
+            country = location.address_components[i].long_name;
+    }
+  }
+
+  var name = createName(city, region, country);
+
+  return name;
+};
+
+createName = function(city, region, country){
+  var name = "";
+
+  if (city) 
+    { name += city; }
+
+  if (city && region) 
+    { name += ", " + region; }
+  else if (region)    
+    { name += region; }
+
+  if ((city || region) && country) 
+    { name += ", " + country; }
+  else if (country)                
+    { name += country; }
+
+  return name;
+};
+
+appendLocationToDOM = function(map, location){
+  var myTitle = document.createElement('h4');
+      myTitle.style.color = 'white';
+      myTitle.innerHTML = "<p id='big_font'>" + location + "</p>";
+
+  var myTextDiv = document.createElement('div');
+      myTextDiv.appendChild(myTitle);
+
+  setTimeout(function(){ 
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(myTextDiv);
+  }, 1000);
+};
+
+addResetButton = function(controlDiv) {
+  var buttonDiv = document.createElement('div');
+      buttonDiv = styleButton(buttonDiv);
+  var textDiv   = document.createElement('div');
+      textDiv   = styleText(textDiv);
+
+  buttonDiv.appendChild(textDiv);
+  controlDiv.appendChild(buttonDiv);
+
+  google.maps.event.addDomListener(buttonDiv, 'click', function() {
     window.location.reload();
   });
-}
+};
+
+styleButton = function(buttonDiv) {
+  buttonDiv.style.backgroundColor = '#fff';
+  buttonDiv.style.border          = '2px solid #fff';
+  buttonDiv.style.borderRadius    = '3px';
+  buttonDiv.style.boxShadow       = '0 2px 6px rgba(0,0,0,.3)';
+  buttonDiv.style.cursor          = 'pointer';
+  buttonDiv.style.marginBottom    = '22px';
+  buttonDiv.style.textAlign       = 'center';
+  buttonDiv.title                 = 'reset button';
+  return buttonDiv;
+};
+
+styleText = function(textDiv){
+  textDiv.style.color         = 'rgb(25,25,25)';
+  textDiv.style.fontFamily    = 'Roboto,Arial,sans-serif';
+  textDiv.style.fontSize      = '16px';
+  textDiv.style.lineHeight    = '38px';
+  textDiv.style.paddingLeft   = '5px';
+  textDiv.style.paddingRight  = '5px';
+  textDiv.innerHTML           = 'RESET';
+  return textDiv;
+};
