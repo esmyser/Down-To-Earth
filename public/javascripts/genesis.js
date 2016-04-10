@@ -147,37 +147,37 @@ getLocation = function(results){
 };
 
 getLocationData = function(results){
-  var result; 
+  var location; 
 
   // see if there's city level data
   for (i=0; i<results.length; i++) {
       if (results[i].types[0]=='locality') { 
-        result = results[i];
+        location = results[i];
         break; 
     }
   }
 
   // if we don't have city level info, check for state level
-  if (!result) {
+  if (!location) {
     for (i=0; i<results.length; i++) {
         if (results[i].types[0]=='administrative_area_level_1') { 
-          result = results[i];
+          location = results[i];
           break; 
       }
     }
   }
 
   // if we don't have a state level info, check for country level
-  if (!result) {
+  if (!location) {
     for (i=0; i<results.length; i++) {
         if (results[i].types[0]=='country') { 
-          result = results[i];
+          location = results[i];
           break; 
       }
     }
   }
 
-  return result;
+  return location;
 };
 
 getLocationName = function(location){
