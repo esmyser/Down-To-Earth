@@ -63,13 +63,12 @@ addRules = function(earth){
 mapIt = function(e) {
   var gMap = new GoogleMap();
 
+  var currentPlace = getPlace(e);
   gMap.map.setCenter(currentPlace);
 
   $("#map-canvas").fadeToggle(900);
 
-  var currentPlace = getPlace(e);
   getStreetview(gMap, currentPlace);
- 
   addResetButton(gMap.controlDiv);
 };
 
@@ -119,27 +118,38 @@ setupAndRenderStreetView = function(data, status, gMap, currentPlace){
       panorama.setPano(data.location.pano);
       panorama.setPov({heading: 270, pitch: 0});
 
-  // getting the location data from the marker
-  var geocoder = new google.maps.Geocoder();
-  
-  geocoder.geocode({ 'location': position }, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK && results[0]) {
-      var location = getLocation(results);
-      console.log(location);
-      appendLocationToDOM(map, location);
-    } else { 
-      console.log("Geocoder failed due to: " + status); 
-    }
-  });
+  reverseGeocodeLocation(map, position);
 
   setTimeout(function(){ marker.setVisible(true);         }, 1000);
   setTimeout(function(){ map.panTo(marker.getPosition()); }, 1000);
   setTimeout(function(){ panorama.setVisible(true);       }, 2500);
 };
 
+reverseGeocodeLocation = function(map, position){
+  var geocoder = new google.maps.Geocoder();
+  
+  geocoder.geocode({ 'location': position }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK && results[0]) {
+      var location = getLocation(results);
+      appendLocationToDOM(map, location);
+      console.log(location);
+    } else { 
+      console.log("Geocoder failed due to: " + status); 
+    }
+  });
+};
+
 getLocation = function(results){
-  var result;
-  // check if we can get city level info
+  var location = getLocationData(results);
+  var name     = getLocationName(location);
+
+  return name;
+};
+
+getLocationData = function(results){
+  var result; 
+
+  // see if there's city level data
   for (i=0; i<results.length; i++) {
       if (results[i].types[0]=='locality') { 
         result = results[i];
@@ -147,7 +157,7 @@ getLocation = function(results){
     }
   }
 
-  // if we don't have a city, we look for state
+  // if we don't have city level info, check for state level
   if (!result) {
     for (i=0; i<results.length; i++) {
         if (results[i].types[0]=='administrative_area_level_1') { 
@@ -157,7 +167,7 @@ getLocation = function(results){
     }
   }
 
-  // if we don't have a state, we look for country
+  // if we don't have a state level info, check for country level
   if (!result) {
     for (i=0; i<results.length; i++) {
         if (results[i].types[0]=='country') { 
@@ -167,38 +177,46 @@ getLocation = function(results){
     }
   }
 
-  // making some easier variables, result.city, result.region, result.country
-  for (i=0; i<result.address_components.length; i++) {
-    if (result.address_components[i].types[0] == "locality") {
-            result.city = result.address_components[i].long_name;
-        }
-    if (result.address_components[i].types[0] == "administrative_area_level_1") {
-            result.region = result.address_components[i].long_name;
-        }
-    if (result.address_components[i].types[0] == "country") {
-            result.country = result.address_components[i].long_name;
-        }
+  return result;
+};
+
+getLocationName = function(location){
+  var city, region, country;
+
+  for (i=0; i<location.address_components.length; i++) {
+    if (location.address_components[i].types[0] == "locality") {
+            city    = location.address_components[i].long_name;
+    }
+    if (location.address_components[i].types[0] == "administrative_area_level_1") {
+            region  = location.address_components[i].long_name;
+    }
+    if (location.address_components[i].types[0] == "country") {
+            country = location.address_components[i].long_name;
+    }
   }
 
-  var city     = result.city;
-  var region   = result.region;
-  var country  = result.country;
-  var location = "";
+  var name = createName(city, region, country);
+
+  return name;
+};
+
+createName = function(city, region, country){
+  var name = "";
 
   if (city) 
-    { location += city; }
+    { name += city; }
 
   if (city && region) 
-    { location += ", " + region; }
+    { name += ", " + region; }
   else if (region)    
-    { location += region; }
+    { name += region; }
 
   if ((city || region) && country) 
-    { location += ", " + country; }
+    { name += ", " + country; }
   else if (country)                
-    { location += country; }
+    { name += country; }
 
-  return location;
+  return name;
 };
 
 appendLocationToDOM = function(map, location){
