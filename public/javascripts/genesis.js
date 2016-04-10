@@ -1,4 +1,4 @@
-function World(){
+function Globe(){
   var options = {
     sky        : true,
     atmosphere : true,
@@ -10,21 +10,42 @@ function World(){
   };
 
   this.ball = WE.map('earth_div', options);
-
   this.map  = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
                   tileSize : 256,
                   tms      : true
-                });
+              });
 
   this.map.addTo(this.ball);
 }
 
-function run(){
-  earth = new World();
-  addRules(earth);
+function GoogleMap(){
+  var mapOptions = {
+      zoom               : 8,
+      panControl         : false,
+      zoomControl        : true,
+      scaleControl       : true,
+      zoomControlOptions : { style : google.maps.ZoomControlStyle.SMALL },
+      mapTypeId          : google.maps.MapTypeId.SATELLITE
+  };
+
+  var mapCanvas = document.getElementById('map-canvas');
+
+  this.map = new google.maps.Map(mapCanvas, mapOptions);
+  this.controlDiv = document.createElement('div');
+  this.controlDiv.index = 1;
+
+  addResetButton(this.controlDiv, this.map);
 }
 
-addRules = function(earth){
+run = function(){
+  earth = new Globe();
+
+  gMap  = new GoogleMap();
+
+  addRules(earth, gMap);
+};
+
+addRules = function(earth, gMap){
   earth.ball.on("mousedown", function(){
     $("#welcome").slideUp();
     dragging = false;
@@ -36,34 +57,20 @@ addRules = function(earth){
 
   earth.ball.on("click", function(e){
     if (dragging) { return; }
-
-    googleMapIt(e);
+    mapIt(gMap, e);
     $("#map-canvas").fadeToggle(900);
   });
 };
 
-googleMapIt = function(e) {
+mapIt = function(gMap, e) {
+  var map = gMap.map;
+  var controlDiv = gMap.controlDiv;
+
   var lt = Number(e.latitude);
   var lg = Number(e.longitude);
   var currentPlace = {lat: lt, lng: lg};
 
-  var mapOptions = {
-      center             : currentPlace,
-      zoom               : 8,
-      panControl         : false,
-      zoomControl        : true,
-      scaleControl       : true,
-      zoomControlOptions : { style : google.maps.ZoomControlStyle.SMALL },
-      mapTypeId          : google.maps.MapTypeId.SATELLITE
-  };
-
-  var mapCanvas = document.getElementById('map-canvas');
-
-  var map = new google.maps.Map(mapCanvas, mapOptions);
-
-  var controlDiv = document.createElement('div');
-      controlDiv.index = 1;
-      centerControl = new CenterControl(controlDiv, map);
+  map.setCenter(currentPlace);
 
   var panorama = map.getStreetView();
       panorama.setPosition(currentPlace);
@@ -159,36 +166,40 @@ googleMapIt = function(e) {
         console.error('Street View data not found for earth location.');
       }
     }
-}
+};
 
-function CenterControl(controlDiv, map) {
-  // Set CSS for the control border
-  var controlUI = document.createElement('div');
-      controlUI.style.backgroundColor = '#fff';
-      controlUI.style.border          = '2px solid #fff';
-      controlUI.style.borderRadius    = '3px';
-      controlUI.style.boxShadow       = '0 2px 6px rgba(0,0,0,.3)';
-      controlUI.style.cursor          = 'pointer';
-      controlUI.style.marginBottom    = '22px';
-      controlUI.style.textAlign       = 'center';
-      controlUI.title                 = 'reset button';
+addResetButton = function(controlDiv, map) {
+  var buttonDiv = document.createElement('div');
+  var textDiv   = document.createElement('div');
 
-  // Set CSS for the control interior
-  var controlText = document.createElement('div');
-      controlText.style.color         = 'rgb(25,25,25)';
-      controlText.style.fontFamily    = 'Roboto,Arial,sans-serif';
-      controlText.style.fontSize      = '16px';
-      controlText.style.lineHeight    = '38px';
-      controlText.style.paddingLeft   = '5px';
-      controlText.style.paddingRight  = '5px';
-      controlText.innerHTML           = 'RESET';
+  styleButton(buttonDiv);
+  styleText(textDiv);
 
-  // Combine Text and UI, add UI to DOM
-  controlUI.appendChild(controlText);
-  controlDiv.appendChild(controlUI);
+  buttonDiv.appendChild(textDiv);
+  controlDiv.appendChild(buttonDiv);
 
-  // Listen for Reset click
-  google.maps.event.addDomListener(controlUI, 'click', function() {
+  google.maps.event.addDomListener(buttonDiv, 'click', function() {
     window.location.reload();
   });
-}
+};
+
+styleButton = function(buttonDiv) {
+  buttonDiv.style.backgroundColor = '#fff';
+  buttonDiv.style.border          = '2px solid #fff';
+  buttonDiv.style.borderRadius    = '3px';
+  buttonDiv.style.boxShadow       = '0 2px 6px rgba(0,0,0,.3)';
+  buttonDiv.style.cursor          = 'pointer';
+  buttonDiv.style.marginBottom    = '22px';
+  buttonDiv.style.textAlign       = 'center';
+  buttonDiv.title                 = 'reset button';
+};
+
+styleText = function(textDiv){
+  textDiv.style.color         = 'rgb(25,25,25)';
+  textDiv.style.fontFamily    = 'Roboto,Arial,sans-serif';
+  textDiv.style.fontSize      = '16px';
+  textDiv.style.lineHeight    = '38px';
+  textDiv.style.paddingLeft   = '5px';
+  textDiv.style.paddingRight  = '5px';
+  textDiv.innerHTML           = 'RESET';
+};
