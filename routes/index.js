@@ -1,6 +1,6 @@
 var express = require('express');
 var router  = express.Router();
-var ENV     = require('figaro.json');
+var ENV     = require('../figaro.json');
 
 // GET Home Page
 router.get('/', function(req, res, next) {
