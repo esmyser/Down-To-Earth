@@ -1,26 +1,24 @@
 var express      = require('express');
-var favicon      = require('serve-favicon');
-var logger       = require('morgan');
-var cookieParser = require('cookie-parser');
+var morgan       = require('morgan');
 var bodyParser   = require('body-parser');
-var routes       = require('./routes/index');
+var env          = require('./figaro.json');
 
 var app = express();
 
-app.set('views', 'views');
+app.set('views', './views');
 app.set('view engine', 'jade');
 
-app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : false }));
-app.use(cookieParser());
 app.use(express.static('public'));
 
-app.get('/', function(req, res, next) {
-  console.log(ENV.key);
-  
+app.get('/', function(req, res) {  
   res.render('index', { 
-      title : 'Down to Earth', 
-      key   : ENV.key 
+      key: env.key 
   });
+});
+
+app.listen(3000, function () {
+  console.log('Starting Down To Earth');
 });

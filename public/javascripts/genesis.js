@@ -41,25 +41,27 @@ run = function(){
   var earth = new Globe();
   var dragging; 
 
-  earth.ball.on("mousedown", function(){
+  earth.ball.canvas.onpointerdown = function(){
     dragging = false;
     $("#welcome").slideUp();
-  });
+  };
 
-  earth.ball.on("mousemove", function(){
+  earth.ball.canvas.onpointermove = function(){
     dragging = true;
-  });
+  };
 
-  earth.ball.on("click", function(e){
+  earth.ball.canvas.onclick = function(e){
     if (dragging) return;
-    mapIt(e);
-  });
+    mapIt(e, earth);
+  };
+
+  console.log(earth);
 };
 
-mapIt = function(e) {
+mapIt = function(e, earth) {
   var gMap = new GoogleMap();
 
-  var currentPlace = getPlace(e);
+  var currentPlace = getPlace(e, earth);
   gMap.map.setCenter(currentPlace);
 
   $("#map-canvas").fadeToggle(900);
@@ -68,10 +70,17 @@ mapIt = function(e) {
   addResetButton(gMap.controlDiv);
 };
 
-getPlace = function(e){
+getPlace = function(e, earth){
+  var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
+  var ellipsoid = earth.ball.getCesiumScene().globe.ellipsoid;
+  var cartesian = earth.ball.getCesiumScene().camera.pickEllipsoid(mousePosition, ellipsoid);
+  var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+  var longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(2);
+  var latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(2);
+
   var currentPlace = {
-    lat : Number(e.latitude), 
-    lng : Number(e.longitude)
+    lat : Number(latitudeString), 
+    lng : Number(longitudeString)
   };
 
   return currentPlace;
