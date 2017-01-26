@@ -39,10 +39,6 @@ function GoogleMap(){
 
 run = function(){
   var earth = new Globe();
-  addRules(earth);
-};
-
-addRules = function(earth){
   var dragging; 
 
   earth.ball.on("mousedown", function(){
@@ -55,7 +51,7 @@ addRules = function(earth){
   });
 
   earth.ball.on("click", function(e){
-    if (dragging) { return; }
+    if (dragging) return;
     mapIt(e);
   });
 };
