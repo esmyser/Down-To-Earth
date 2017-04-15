@@ -39,4 +39,6 @@ Thumbs.db
 # API Keys #
 ############
 config.js
+
+/node_modules
 figaro.json
