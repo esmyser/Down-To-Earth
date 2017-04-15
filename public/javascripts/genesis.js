@@ -5,16 +5,16 @@ function Globe(){
     dragging   : true,
     tilting    : false,
     zooming    : true,
-    center     : [0, 100],
+    center     : [0, randomInt(-180, 180)],
     zoom       : 3.2
   };
 
   this.ball = WE.map('earth_div', options);
-  this.map  = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
-                  tileSize : 256,
-                  tms      : true
-              });
-    
+
+  this.map = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
+    tileSize : 256,
+    tms      : true
+  });
 
   this.map.addTo(this.ball);
 }
@@ -22,16 +22,15 @@ function Globe(){
 function GoogleMap(){
   var mapDiv = document.getElementById('map-canvas');
   var mapOptions = {
-      center             : { lat: -34, lng: 151 },
-      zoom               : 8,
-      panControl         : false,
-      scaleControl       : true,
-      zoomControl        : true,
-      zoomControlOptions : { style : google.maps.ZoomControlStyle.SMALL },
-      mapTypeId          : google.maps.MapTypeId.SATELLITE
+    zoom               : 8,
+    panControl         : false,
+    scaleControl       : true,
+    zoomControl        : true,
+    zoomControlOptions : { style : google.maps.ZoomControlStyle.SMALL },
+    mapTypeId          : google.maps.MapTypeId.SATELLITE
   };
 
-  this.map        = new google.maps.Map(mapDiv, mapOptions);
+  this.map = new google.maps.Map(mapDiv, mapOptions);
   this.streetview = new google.maps.StreetViewService();
   this.controlDiv = document.createElement('div');
   this.controlDiv.index = 1;
@@ -40,6 +39,20 @@ function GoogleMap(){
 run = function(){
   var earth = new Globe();
   var dragging; 
+
+  $(earth.ball.getCesiumScene().canvas).on('touchstart', function(){
+    dragging = false;
+    $("#welcome").slideUp();
+  });
+
+  $(earth.ball.getCesiumScene().canvas).on('touchmove', function(){
+    dragging = true;
+  });
+
+  $(earth.ball.getCesiumScene().canvas).on('touchend', function(e){
+    if (dragging) return;
+    mapIt(e.originalEvent, earth);
+  });
 
   earth.ball.canvas.onpointerdown = function(){
     dragging = false;
@@ -54,8 +67,6 @@ run = function(){
     if (dragging) return;
     mapIt(e, earth);
   };
-
-  console.log(earth);
 };
 
 mapIt = function(e, earth) {
@@ -71,7 +82,7 @@ mapIt = function(e, earth) {
 };
 
 getPlace = function(e, earth){
-  var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
+  var mousePosition = new Cesium.Cartesian2(e.pageX, e.pageY);
   var ellipsoid = earth.ball.getCesiumScene().globe.ellipsoid;
   var cartesian = earth.ball.getCesiumScene().camera.pickEllipsoid(mousePosition, ellipsoid);
   var cartographic = ellipsoid.cartesianToCartographic(cartesian);
@@ -273,3 +284,7 @@ styleText = function(textDiv){
   textDiv.innerHTML           = 'RESET';
   return textDiv;
 };
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
